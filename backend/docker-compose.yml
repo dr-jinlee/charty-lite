@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # 프론트엔드 (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8080/ws
+    restart: unless-stopped
+
+  # 백엔드 (Node.js + WebSocket)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ai
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data  # DB + 녹음 파일 로컬 저장
+    restart: unless-stopped
+
+  # AI 모듈 (Python - STT, 화자분리, 차트생성)
+  ai:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    volumes:
+      - whisper-models:/root/.cache  # Whisper 모델 캐시
+    # GPU 사용 시 아래 주석 해제
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  whisper-models:

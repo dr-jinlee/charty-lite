@@ -1,0 +1,883 @@
+{
+  "clinic_name": "세라미크의원 - 강남점 | 강남역피부과 강남피부과",
+  "clinic_url": "https://gangnam.ceramiqueclinic.com",
+  "crawled_at": "2026-03-29T00:40:52.375Z",
+  "total_count": 125,
+  "procedures": [
+    {
+      "category": "시그니처",
+      "name": "시그니처 노화방지 프로그램 | 티타늄 80KJ + 미백앰플 + LDM 12분 흡수 + 백옥주사 + 멀티비타민 (수액 정맥주사)",
+      "price": 1400000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "시그니처",
+      "name": "*국소마취 포함 | 써마지FLX 600샷 + 울쎄라피 프라임 300샷",
+      "price": 3300000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "시그니처",
+      "name": "*국소마취 포함 | 울쎄라피 프라임 300샷 + 써마지FLX 300샷 + 티타늄 50KJ",
+      "price": 3300000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "시그니처",
+      "name": "*국소마취 포함 | 튠페이스(블루+레드) 50KJ + 튠라이너 8분 + 리쥬란 2cc + 아이리쥬란 1cc + 모델링팩",
+      "price": 1300000,
+      "original_price": 1550000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "시그니처",
+      "name": "*통증수액+국소마취 포함 (선택) / *필요한곳 보톡스 서비스 | 줄기세포 정맥주사 12cc + BBL 스킨타이트 + 써마지600샷 + 튠 페리오비탈 50 Kj + 아스트로돔 + 모델링팩",
+      "price": 8000000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "지방분해주사",
+      "name": "지방분해주사 | 벨라콜린",
+      "price": 400000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "지방분해주사",
+      "name": "세라핏주사 (페이스)",
+      "price": 30000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "지방분해주사",
+      "name": "세라핏주사 (바디)",
+      "price": 80000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "스킨 보톡스 (내성줄인 독일 보톡스) 2cc | 페이스,목주름,턱선 中 택 1 (2cc)",
+      "price": 150000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "스킨 보톡스 (오리지널 프리미엄) 2cc | 페이스,목주름,턱선 中 택 1 (2cc)",
+      "price": 200000,
+      "original_price": 400000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "스킨 보톡스 (내성줄인 독일 보톡스) 4cc | 페이스,목주름,턱선 中 택 1 (4cc)",
+      "price": 300000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "스킨 보톡스 (오리지널 프리미엄 보톡스) 4cc | 페이스,목주름,턱선 中 택 1 (4cc)",
+      "price": 400000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "*최대 300유닛 사용 | 마취크림(얼굴,목,승모근) + 얼전 근육보톡스 + 얼전 스킨보톡스 + 승모근 보톡스 + 목주름 보톡스(서비스)",
+      "price": 1100000,
+      "original_price": 1400000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "*최대 300유닛 사용 | 마취크림(얼굴,목,승모근) + 얼전 근육보톡스 + 얼전 스킨보톡스 + 승모근 보톡스 + 목주름 보톡스(서비스)",
+      "price": 1300000,
+      "original_price": 1600000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "*최대 200유닛 사용 | 흉쇄유돌근, 사각근, 플라티즈마근, 승모근 보톡스 + 목주름 보톡스 (서비스)",
+      "price": 700000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "*최대 200유닛 사용 | 흉쇄유돌근, 사각근, 플라티즈마근, 승모근 보톡스 + 목주름 보톡스 (서비스)",
+      "price": 900000,
+      "original_price": 1200000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "마취크림(얼굴전체) + 얼굴전체 근육보톡스 | *맞춤 디자인 후 시술",
+      "price": 550000,
+      "original_price": 600000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "마취크림(얼굴전체) + 얼굴전체 근육보톡스 | *맞춤 디자인 후 시술",
+      "price": 700000,
+      "original_price": 800000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "목주름 / 턱선 보톡스 (오리지널 프리미엄 보톡스) | 목주름 스킨보톡스 / 턱선보톡스 中 택1",
+      "price": 200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "목주름 / 턱선 보톡스 (내성줄인 독일 보톡스) | 목주름 스킨보톡스 / 턱선보톡스 中 택1",
+      "price": 150000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "무의식적인 긴장과 각진 턱선을 완화해 부드럽게 다듬는 시술 | 사각턱 / 침샘 中 택1",
+      "price": 150000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "무의식적인 긴장과 각진 턱선을 완화해 부드럽게 다듬는 시술 | 사각턱 / 침샘 中 택1",
+      "price": 200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "주름 보톡스 1부위 (내성줄인 독일 보톡스) | 이마, 미간, 눈가, 팔자주름, 콧등, 콧볼, 인중, 입꼬리, 자갈턱 中 택1",
+      "price": 70000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "주름 보톡스 1부위 (오리지널 프리미엄 보톡스) | 이마, 미간, 눈가, 팔자주름, 콧등, 콧볼, 인중, 입꼬리, 자갈턱 中 택1",
+      "price": 90000,
+      "original_price": 100000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "보톡스",
+      "name": "주름 보톡스 3부위 (내성줄인 독일 보톡스) | 이마, 미간, 눈가, 팔자주름, 콧등, 콧볼, 인중, 입꼬리, 자갈턱 中 택3",
+      "price": 180000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "보톡스",
+      "name": "주름 보톡스 3부위 (오리지널 프리미엄 보톡스) | 이마, 미간, 눈가, 팔자주름, 콧등, 콧볼, 인중, 입꼬리, 자갈턱 中 택3",
+      "price": 320000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "필러",
+      "name": "국산필러 | 셀레스텔라",
+      "price": 150000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "필러",
+      "name": "프리미엄 국산필러 | 아말리안",
+      "price": 350000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "필러",
+      "name": "수입 필러 - 특수부위 | 미간, 눈꺼풀, 눈썹뼈위, 애교, 눈밑, 요정귀",
+      "price": 550000,
+      "original_price": 1200000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "필러",
+      "name": "프리미엄 국산필러- 특수부위",
+      "price": 450000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "필러",
+      "name": "수입 필러 - 특수부위 외 적용 | 쥬비덤, 레스틸렌, 벨로테, 엘라비에",
+      "price": 450000,
+      "original_price": 900000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "강력한 레이저 파장이 콜라겐 늘어진 피부 처짐을 개선. | 다운타임과 통증 걱정없는 모공축소 / 리프팅 효과",
+      "price": 400000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "강력한 레이저 파장이 콜라겐 늘어진 피부 처짐을 개선. | 다운타임과 통증 걱정없는 모공축소 / 리프팅 효과",
+      "price": 500000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "BBL 포에버영 [DNA 회춘] (풀페이스~ 쇄골까지) | 하이앤드 명품 레이저, 피부 속 노화된 DNA 유전자를 회춘시키는 근본적인 안티에이징 효과",
+      "price": 400000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "BBL 포에버영 [DNA 회춘] (바디 (부위당) *복부,등, 팔 등) | 하이앤드 명품 레이저, 피부 속 노화된 DNA 유전자를 회춘시키는 근본적인 안티에이징 효과",
+      "price": 500000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "튠라이너(지방) 8분 | 얼굴 지방, 이중턱",
+      "price": 300000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "페리오비탈(레드,블루) 50Kj | 눈가, 입가, 이마, 목주름",
+      "price": 500000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "페리오비탈(레드,블루) 100Kj | 팔자주름, 심부볼, 턱선",
+      "price": 890000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "커스텀 튠 큐레이션 | 튠 레드 + 튠 블루 100KJ + 튠 라이너 5분",
+      "price": 990000,
+      "original_price": 2500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "*눈가+눈밑+양볼+턱라인 | EMS+RF 모드 10분+EMS 패치 10분",
+      "price": 450000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "*눈가+눈밑+양볼+턱라인 | EMS+RF 모드 10분+EMS 패치 10분",
+      "price": 1190000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "*눈가+눈밑+양볼+턱라인 | EMS+RF 모드 10분+EMS 패치 10분",
+      "price": 1700000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "*이마+관자+눈가+눈밑+양볼+턱라인 | EMS+RF 모드 12분+EMS 패치 20분",
+      "price": 590000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "*이마+관자+눈가+눈밑+양볼+턱라인 | EMS+RF 모드 12분+EMS 패치 20분",
+      "price": 1490000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "*이마+관자+눈가+눈밑+양볼+턱라인 | EMS+RF 모드 12분+EMS 패치 20분",
+      "price": 2200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "EMS+RF 모드 12분+EMS 패치 20분 | 온다 1만줄 추가 / *단독불가",
+      "price": 100000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "온다 5만줄(이중턱)",
+      "price": 500000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "온다 10만줄(이중턱 + 하관)",
+      "price": 900000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "온다 20만줄(분할사용 / 바디 사용 가능)",
+      "price": 1800000,
+      "original_price": 4000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "온다 30만줄(분할사용 / 바디 사용 가능)",
+      "price": 2700000,
+      "original_price": 5000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "온다 50만줄(분할사용 / 바디 사용 가능)",
+      "price": 4000000,
+      "original_price": 8000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "티타늄 10KJ추가 / *단독불가",
+      "price": 200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "리프팅",
+      "name": "티타늄 30KJ",
+      "price": 500000,
+      "original_price": 700000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "티타늄 50KJ",
+      "price": 800000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "티타늄 100KJ",
+      "price": 1300000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "소프웨이브 100펄스",
+      "price": 1100000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "소프웨이브 200펄스",
+      "price": 1900000,
+      "original_price": 3500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "소프웨이브 300펄스",
+      "price": 2700000,
+      "original_price": 5000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "울쎄라피 프라임 100샷추가 *단독불가",
+      "price": 450000,
+      "original_price": 700000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "울쎄라피 프라임 300샷",
+      "price": 1300000,
+      "original_price": 1800000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "울쎄라피 프라임 600샷",
+      "price": 2300000,
+      "original_price": 3000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "울쎄라피 프라임 900샷",
+      "price": 3400000,
+      "original_price": 5500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "써마지FLX 300샷",
+      "price": 1500000,
+      "original_price": 1800000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "써마지FLX 600샷",
+      "price": 2200000,
+      "original_price": 3000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "써마지FLX 900샷",
+      "price": 3000000,
+      "original_price": 4000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "아이 써마지 225샷",
+      "price": 1300000,
+      "original_price": 1500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "리프팅",
+      "name": "아이 써마지 450샷",
+      "price": 2000000,
+      "original_price": 2500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "스컬트라 | PLLA 성분의 콜라겐 생성유도제로 진피에 자극을 주어 콜라겐자가 생성을 유도합니다 / *미국 FDA 승인",
+      "price": 1000000,
+      "original_price": 1500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "CaHA(칼슘 하이드록시아파타이트) 성분이 즉각적인 볼륨 효과를 제공하고, 콜라겐 생성을 유도하여 지속적인 탄력과 촉촉함을 선사합니다. / *미국 FDA 승인 | *미라젯 포르테 / 포텐자로 주입시 +10만원 추가",
+      "price": 1000000,
+      "original_price": 1500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "PDLLA 성분이 콜라겐 생성을 유도하여 피부결개선, 모공축소를 돕습니다. / *유럽 CE 승인 | *미라젯 포르테 / 포텐자로 주입시 +10만원 추가",
+      "price": 400000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "PDLLA 성분이 콜라겐 생성을 유도하여 피부결개선, 모공축소를 돕습니다. / *유럽 CE 승인 | *미라젯 포르테 / 포텐자로 주입시 +10만원 추가",
+      "price": 800000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "PLLA 입자가 섬유아세포를 자극하여 콜라겐 생성을 유도합니다. / *유럽 CE 승인 | *미라젯 포르테 / 포텐자로 주입시 +10만원 추가",
+      "price": 400000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "PLLA 입자가 섬유아세포를 자극하여 콜라겐 생성을 유도합니다. / *유럽 CE 승인 | *미라젯 포르테 / 포텐자로 주입시 +10만원 추가",
+      "price": 800000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "*미라젯 포르테 / 포텐자로 주입시 +10만원 추가 | 저통증 리쥬란, 히알루론산 함유로 보습효과까지 동시에 / *유럽 CE 승인",
+      "price": 165000,
+      "original_price": 250000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "리쥬란 아이 1cc | 눈가전용 리쥬란, 저통증 / *유럽 CE 승인",
+      "price": 150000,
+      "original_price": 250000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "스킨부스터",
+      "name": "*미라젯 포르테 / 포텐자로 주입시 +10만원 추가 | 연어유래 PN 성분이 섬유아세포를 자극하여 콜라겐 생성을 유도합니다. *유럽 CE 승인",
+      "price": 300000,
+      "original_price": 400000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "BBL 클리어 [트러블] (풀페이스)",
+      "price": 450000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "BBL 클리어 [트러블] (가슴 / 등) | 각 부위당",
+      "price": 600000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "* BBL 히어로 3단계 맞춤시술 (BBL포에버영 - BBL히어로 또는 클리어 - BBL스킨타이트) / | * 애프터케어 ㅣ LDM, 아스트로덤 택1 + 모델링팩",
+      "price": 750000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "* BBL 히어로 3단계 맞춤시술 (BBL포에버영 - BBL히어로 또는 클리어 - BBL스킨타이트) / | * 애프터케어 ㅣ LDM, 아스트로덤 택1 + 모델링팩",
+      "price": 3000000,
+      "original_price": 8000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "* BBL 히어로 3단계 맞춤시술 (BBL포에버영 - BBL히어로 또는 클리어 - BBL스킨타이트) / | * 애프터케어 ㅣ LDM, 아스트로덤 택1 + 모델링팩",
+      "price": 5000000,
+      "original_price": 15000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "BBL 히어로 [기미,홍조,색소침착] (풀페이스) | 기존 IPL보다 5배 더 강력한 효과로 기미, 홍조, 색소침착 개선",
+      "price": 700000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "BBL 히어로 [기미,홍조,색소침착] (가슴 / 등 / 팔 바디잡티 또는 색소침착) | 기존 IPL보다 5배 더 강력한 효과로 기미, 홍조, 색소침착 개선",
+      "price": 700000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "BBL 히어로 [기미,홍조,색소침착] (홍조 / 혈관 / 체리종 / 모세혈관 확장증) | 기존 IPL보다 5배 더 강력한 효과로 기미, 홍조, 색소침착 개선",
+      "price": 700000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "어븀 ( 마이크로필링/ 프락셀 )",
+      "price": 200000,
+      "original_price": 500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "어븀 ( 사마귀 3mm 1P ) | 편평사마귀 및 쥐젖을 비롯한 사마귀 / 3mm 1P",
+      "price": 30000,
+      "original_price": 100000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "색소치료",
+      "name": "어븀 ( 사마귀 5mm 1P ) | 편평사마귀 및 쥐젖을 비롯한 사마귀 / 5mm 1P",
+      "price": 50000,
+      "original_price": 100000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "리들부스터 (EX/PN) 1회 | 후관리 : LDM 12분",
+      "price": 450000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "얼굴전체 | 주사바늘 없이 강력한 레이저 제트분사로 약물을 주입하는 신기술로, 진피층에 정확하고 균일한 약물전달 및 피부재생을 돕습니다. *피부결, 모공, 여드름흉터 개선에 효과적입니다.* 세라미크만의 피부재생 약물을 사용하며, 맞춤 스킨부스터 병행이 가능합니다.",
+      "price": 700000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "얼굴전체 | 주사바늘 없이 강력한 레이저 제트분사로 약물을 주입하는 신기술로, 진피층에 정확하고 균일한 약물전달 및 피부재생을 돕습니다. *피부결, 모공, 여드름흉터 개선에 효과적입니다.* 세라미크만의 피부재생 약물을 사용하며, 맞춤 스킨부스터 병행이 가능합니다.",
+      "price": 1900000,
+      "original_price": 3000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "얼굴전체 | 주사바늘 없이 강력한 레이저 제트분사로 약물을 주입하는 신기술로, 진피층에 정확하고 균일한 약물전달 및 피부재생을 돕습니다. *피부결, 모공, 여드름흉터 개선에 효과적입니다.* 세라미크만의 피부재생 약물을 사용하며, 맞춤 스킨부스터 병행이 가능합니다.",
+      "price": 3000000,
+      "original_price": 4000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "포텐자 모공,흉터 1회 | *얼굴전체 / 개인팁 사용",
+      "price": 250000,
+      "original_price": 500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "포텐자 모공,흉터 3회 | *얼굴전체 / 개인팁 사용",
+      "price": 690000,
+      "original_price": 1500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "포텐자 모공,흉터 5회 | *얼굴전체 / 개인팁 사용",
+      "price": 990000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "* 피부컨디션에 따라 매 회차 미라젯, 포텐자 중 택1 + 쥬베룩, 올리디아, 스킨보톡스 중 택1을 조합하여 맞춤시술 | * 통증케어ㅣ 마취크림, 국소마취 / * 애프터케어 ㅣ 아스트로돔 + 모델링팩",
+      "price": 550000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "모공 • 흉터",
+      "name": "* 피부컨디션에 따라 매 회차 미라젯, 포텐자 중 택1 + 쥬베룩, 올리디아, 스킨보톡스 중 택1을 조합하여 맞춤시술 | * 통증케어ㅣ 마취크림, 국소마취 / * 애프터케어 ㅣ 아스트로돔 + 모델링팩",
+      "price": 1450000,
+      "original_price": 3000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "이온자임 미백관리 | 수분,보습",
+      "price": 69000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "이온자임 미백관리 5회 | 수분,보습",
+      "price": 299000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "SONO관리(초음파) | 보습",
+      "price": 69000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "SONO관리(초음파) 5회 | 보습",
+      "price": 299000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "호박필 | 천연 레티놀 영양필링 피부의 필링 작용과 영양공급이 동시에 이루어져 피부가 즉각적인 효과",
+      "price": 200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "블랙필 | 천연 발효 흑초를 기초로 하여 피부 영양 공급과 각질제거 및 염증성 여드름 피부에 효과",
+      "price": 200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "라라젯 | 고압 마이크로젯과 LHA 성분이 각질제거, 피지제거, 유수분 밸런스에 도움",
+      "price": 150000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "라라필 | LHA를 기반으로 각질제거와 표피층 리모델링,세포 기질의 재생자극으로 모공축소,피지분비정상화,여드름개선의 효과",
+      "price": 200000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "아쿠아필 1회 | 초기여드름 개선에 도움을 줍니다",
+      "price": 60000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "크라이오 진정관리 1회 | 진정",
+      "price": 69000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "크라이오 진정관리 5회 | 진정",
+      "price": 299000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "이온비타민 미백관리 1회 | 미백",
+      "price": 69000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "이온비타민 미백관리 5회 | 미백",
+      "price": 299000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "아스트로덤(레드: 탄력, 미백 / 블루 : 여드름, 피지, 모공 / 퍼플 : 시술후 진정관리) | 순수 산소와 음이온, 그리고 최적의 LED 파장으로 세포재생 및 시술후 피부진정에 도움",
+      "price": 150000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "LDM(6분) | *민감성 피부, 멍붓기, 홍조 피부에 효과.",
+      "price": 50000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "LDM(12분) | *민감성 피부, 멍붓기, 홍조 피부에 효과.",
+      "price": 100000,
+      "original_price": 200000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "파셀라 얼굴,승모근 20분 | 얼굴과 목의 뭉쳐있는 근막을 부드럽게 풀어주는 메디컬 고주파 경락 관리",
+      "price": 300000,
+      "original_price": 500000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "파셀라 바디 20분 | 승모근, 팔, 부유방, 복부의 근막을 부드럽게 풀어주는 메디컬 고주파 경락 관리",
+      "price": 550000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "파셀라 바디 20분 | 골반, 허벅지, 종아리의 근막을 부드럽게 풀어주는 메디컬 고주파 경락 관리",
+      "price": 550000,
+      "original_price": 1000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "메디컬 스킨케어",
+      "name": "전신의 근막을 부드럽게 풀어주는 메디컬 고주파 경락 관리 | *얼굴 포함",
+      "price": 800000,
+      "original_price": 2000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "전반적인 기능 개선 | 정맥주사",
+      "price": 300000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "만성피로회복, 체력증진, 집중력향상에 도움 | 정맥주사",
+      "price": 180000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "만성피로회복, 체력증진 | 정맥주사",
+      "price": 180000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "신진대사 향상, 다이어트 | 정맥주사",
+      "price": 180000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "활력, 두뇌 활성화 | 정맥주사",
+      "price": 180000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "여행, 물갈이, 장염 | 정맥주사",
+      "price": 180000,
+      "original_price": null,
+      "price_type": "정규가"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "전신 통증, 상처 회복, 뼈 강화 | 근육 주사, 피하지방주사",
+      "price": 250000,
+      "original_price": 300000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "정맥주사 / *염증질환 개선, 피부질환 개선, 안티에이징, 면역기능 강화에 효과적 | 줄기세포 피부재생술 병행시 +100만원 추가",
+      "price": 5000000,
+      "original_price": 6000000,
+      "price_type": "이벤트"
+    },
+    {
+      "category": "디톡스&바이탈 수액테라피",
+      "name": "정맥주사 / *염증질환 개선, 피부질환 개선, 안티에이징, 면역기능 강화에 효과적 | 줄기세포 피부재생술 병행시 +100만원 추가",
+      "price": 9000000,
+      "original_price": 10000000,
+      "price_type": "이벤트"
+    }
+  ]
+}
