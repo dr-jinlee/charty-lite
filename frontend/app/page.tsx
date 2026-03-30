@@ -27,6 +27,8 @@ export default function Home() {
   const [managerName, setManagerName] = useState('');
   const [chartStyle, setChartStyle] = useState<'detailed' | 'balanced' | 'summary'>('detailed');
   const [sttLang, setSttLang] = useState<'ko' | 'en' | 'bilingual'>('ko');
+  const [interpretMode, setInterpretMode] = useState(false);
+  const [targetLang, setTargetLang] = useState('en');
 
   const [transcripts, setTranscripts] = useState<TranscriptEntry[]>([]);
   const [partialText, setPartialText] = useState<string | null>(null);
@@ -95,6 +97,24 @@ export default function Home() {
     return text.replace(correctionRegexRef.current, match => correctionsRef.current[match] || match);
   }
 
+  // 통번역: 비동기 번역 (STT 차단 없이 백그라운드 실행)
+  function translateAsync(entryId: string, text: string, lang: string) {
+    fetch(`${API_URL}/interpret/translate`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, sourceLang: 'ko', targetLang: lang, speakerRole: 'doctor' }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        const translated = data.translatedText || data.translation || '';
+        if (translated) {
+          setTranscripts(prev => prev.map(e =>
+            e.id === entryId ? { ...e, translation: translated } : e
+          ));
+        }
+      })
+      .catch(() => {});
+  }
+
   // 리사이즈 (movementX, 이벤트 1회 등록)
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
@@ -153,9 +173,15 @@ export default function Home() {
       if (interimText) { setPartialText(correctText(interimText)); setPartialSpeaker('unknown'); setIsSpeaking(true); setAudioLevel(0.7); }
       if (finalText.trim()) {
         setPartialText(null); setIsSpeaking(false); setAudioLevel(0);
+        const corrected = correctText(finalText.trim());
+        const entryId = `t-${Date.now()}-${Math.random()}`;
         setTranscripts(prev => [...prev, {
-          id: `t-${Date.now()}-${Math.random()}`, speaker: 'unknown', text: correctText(finalText.trim()), lang: 'ko', timestamp: Date.now(),
+          id: entryId, speaker: 'unknown', text: corrected, lang: 'ko', timestamp: Date.now(),
         }]);
+        // 통번역 모드: 비동기 번역 (STT 차단 없음)
+        if (interpretMode) {
+          translateAsync(entryId, corrected, targetLang);
+        }
       }
     };
     recognition.onerror = (event: any) => { if (event.error === 'aborted') return; };
@@ -320,10 +346,21 @@ export default function Home() {
               <>
                 <div>
                   <p className="text-[10px] text-slate-400 mb-0.5">통번역</p>
-                  <button onClick={() => setSttLang(sttLang === 'bilingual' ? 'ko' : 'bilingual')}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${sttLang === 'bilingual' ? 'bg-purple-600 text-white' : 'bg-white border border-slate-200 text-slate-400 hover:bg-slate-100'}`}>
-                    {sttLang === 'bilingual' ? '통번역 ON' : '통번역 OFF'}
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => setInterpretMode(!interpretMode)}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${interpretMode ? 'bg-purple-600 text-white' : 'bg-white border border-slate-200 text-slate-400 hover:bg-slate-100'}`}>
+                      {interpretMode ? 'ON' : 'OFF'}
+                    </button>
+                    {interpretMode && (
+                      <select value={targetLang} onChange={e => setTargetLang(e.target.value)}
+                        className="text-sm border border-slate-200 rounded-lg px-2 py-1.5 bg-white">
+                        <option value="en">English</option>
+                        <option value="zh">中文</option>
+                        <option value="ja">日本語</option>
+                        <option value="vi">Tiếng Việt</option>
+                      </select>
+                    )}
+                  </div>
                 </div>
                 <div className="w-px h-8 bg-slate-200" />
               </>
@@ -368,7 +405,8 @@ export default function Home() {
         <div style={{ width: colWidths[0] || '35%' }} className="flex flex-col min-w-0 flex-shrink-0">
           <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
             {inputMode === 'voice' && (
-              <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker} />
+              <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
+                isInterpreting={interpretMode} targetLang={targetLang} />
             )}
             {inputMode === 'upload' && status === 'idle' && (
               <div className="flex flex-col h-full">
