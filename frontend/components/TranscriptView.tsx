@@ -18,6 +18,7 @@ interface TranscriptViewProps {
   partialSpeaker: string;
   isInterpreting?: boolean;
   targetLang?: string;
+  partialTranslation?: string | null;
 }
 
 const LANG_LABELS: Record<string, string> = {
@@ -25,7 +26,7 @@ const LANG_LABELS: Record<string, string> = {
 };
 
 export default function TranscriptView({
-  entries, partialText, partialSpeaker, isInterpreting, targetLang,
+  entries, partialText, partialSpeaker, isInterpreting, targetLang, partialTranslation,
 }: TranscriptViewProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -61,9 +62,14 @@ export default function TranscriptView({
             </div>
           ))}
           {partialText && (
-            <p className="text-[12px] text-slate-400">
-              {partialText}<span className="inline-block w-0.5 h-3 bg-purple-500 animate-pulse ml-px align-middle" />
-            </p>
+            <div>
+              <p className="text-[12px] text-slate-400">
+                {partialText}<span className="inline-block w-0.5 h-3 bg-purple-500 animate-pulse ml-px align-middle" />
+              </p>
+              {partialTranslation && (
+                <p className="text-[11px] text-purple-300 ml-2">{partialTranslation}</p>
+              )}
+            </div>
           )}
         </div>
       </div>

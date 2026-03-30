@@ -8,6 +8,7 @@ import ConsultationChecklist from '@/components/ConsultationChecklist';
 import ConsultationProgress from '@/components/ConsultationProgress';
 import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
+import { instantTranslate } from '@/lib/medicalDict';
 
 type AppStatus = 'idle' | 'recording' | 'paused' | 'processing' | 'done';
 type InputMode = 'voice' | 'upload' | 'text';
@@ -97,8 +98,39 @@ export default function Home() {
     return text.replace(correctionRegexRef.current, match => correctionsRef.current[match] || match);
   }
 
-  // 통번역: 비동기 번역 (STT 차단 없이 백그라운드 실행)
-  function translateAsync(entryId: string, text: string, lang: string) {
+  // ─── 통번역 4단계 파이프라인 ───
+  const interimTranslateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const postCorrectionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 1단계: 사전 매칭 (0ms, 클라이언트)
+  function dictTranslate(text: string, lang: string): string | null {
+    return instantTranslate(text, lang);
+  }
+
+  // 2단계: interim 선번역 (중간 결과 일정 길이 이상이면 미리 번역 시작)
+  function preTranslateInterim(text: string, lang: string) {
+    if (!interpretMode || text.length < 8) return;
+    if (interimTranslateRef.current) clearTimeout(interimTranslateRef.current);
+    interimTranslateRef.current = setTimeout(() => {
+      // 사전 매칭 결과를 partial 번역으로 미리 표시
+      const dict = dictTranslate(text, lang);
+      if (dict) setPartialTranslation(dict);
+    }, 200);
+  }
+
+  const [partialTranslation, setPartialTranslation] = useState<string | null>(null);
+
+  // 3단계: final 번역 (API, 정확)
+  function translateFinal(entryId: string, text: string, lang: string) {
+    // 즉시: 사전 매칭 표시
+    const dictResult = dictTranslate(text, lang);
+    if (dictResult) {
+      setTranscripts(prev => prev.map(e =>
+        e.id === entryId ? { ...e, translation: dictResult } : e
+      ));
+    }
+
+    // API 번역 요청
     fetch(`${API_URL}/interpret/translate`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, sourceLang: 'ko', targetLang: lang, speakerRole: 'doctor' }),
@@ -111,8 +143,44 @@ export default function Home() {
             e.id === entryId ? { ...e, translation: translated } : e
           ));
         }
+        // 4단계: 후보정 예약 (3초 후, 앞뒤 문맥 포함)
+        schedulePostCorrection(entryId, text, translated, lang);
       })
       .catch(() => {});
+  }
+
+  // 4단계: 후보정 (3초 후, 주변 문장 문맥 포함하여 자연스럽게)
+  function schedulePostCorrection(entryId: string, original: string, firstTranslation: string, lang: string) {
+    if (postCorrectionRef.current) clearTimeout(postCorrectionRef.current);
+    postCorrectionRef.current = setTimeout(() => {
+      // 앞뒤 문장 문맥 수집
+      const allTexts = transcriptsRef.current;
+      const idx = allTexts.findIndex(e => e.id === entryId);
+      if (idx === -1) return;
+      const contextBefore = allTexts.slice(Math.max(0, idx - 2), idx).map(e => e.text).join(' ');
+      const contextAfter = allTexts.slice(idx + 1, idx + 2).map(e => e.text).join(' ');
+
+      fetch(`${API_URL}/interpret/translate`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: original,
+          sourceLang: 'ko',
+          targetLang: lang,
+          speakerRole: 'doctor',
+          customPrompt: `이전 문맥: "${contextBefore}". 다음 문맥: "${contextAfter}". 이 맥락에서 "${original}"을 자연스럽고 정확하게 번역하세요. 의료/미용 전문 용어를 정확히 사용하세요.`,
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          const corrected = data.translatedText || data.translation || '';
+          if (corrected && corrected !== firstTranslation) {
+            setTranscripts(prev => prev.map(e =>
+              e.id === entryId ? { ...e, translation: corrected } : e
+            ));
+          }
+        })
+        .catch(() => {});
+    }, 3000);
   }
 
   // 리사이즈 (movementX, 이벤트 1회 등록)
@@ -170,17 +238,23 @@ export default function Home() {
         const text = result[0].transcript;
         if (result.isFinal) finalText += text; else interimText += text;
       }
-      if (interimText) { setPartialText(correctText(interimText)); setPartialSpeaker('unknown'); setIsSpeaking(true); setAudioLevel(0.7); }
+      if (interimText) {
+        setPartialText(correctText(interimText));
+        setPartialSpeaker('unknown'); setIsSpeaking(true); setAudioLevel(0.7);
+        // 2단계: interim 선번역
+        if (interpretMode) preTranslateInterim(correctText(interimText), targetLang);
+      }
       if (finalText.trim()) {
-        setPartialText(null); setIsSpeaking(false); setAudioLevel(0);
+        setPartialText(null); setPartialTranslation(null);
+        setIsSpeaking(false); setAudioLevel(0);
         const corrected = correctText(finalText.trim());
         const entryId = `t-${Date.now()}-${Math.random()}`;
         setTranscripts(prev => [...prev, {
           id: entryId, speaker: 'unknown', text: corrected, lang: 'ko', timestamp: Date.now(),
         }]);
-        // 통번역 모드: 비동기 번역 (STT 차단 없음)
+        // 통번역: 1→3→4단계 (사전→API→후보정)
         if (interpretMode) {
-          translateAsync(entryId, corrected, targetLang);
+          translateFinal(entryId, corrected, targetLang);
         }
       }
     };
@@ -406,7 +480,7 @@ export default function Home() {
           <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
             {inputMode === 'voice' && (
               <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
-                isInterpreting={interpretMode} targetLang={targetLang} />
+                isInterpreting={interpretMode} targetLang={targetLang} partialTranslation={partialTranslation} />
             )}
             {inputMode === 'upload' && status === 'idle' && (
               <div className="flex flex-col h-full">
