@@ -435,10 +435,12 @@ export default function Home() {
             <span className="text-sm font-bold text-[#191c1d] tracking-tight">charty</span>
             <span className="text-[10px] text-slate-400 ml-1">lite</span>
           </div>
-          {/* 배너 공간 */}
-          <div className="text-xs text-slate-400">
-            실시간 상담 차트 · Chrome 전용
-          </div>
+          {/* 배너 */}
+          <a href="https://centurion.medisolve.ai" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1 rounded-lg bg-gradient-to-r from-purple-50 to-slate-50 hover:from-purple-100 hover:to-slate-100 transition-colors">
+            <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider">AD</span>
+            <span className="text-xs text-slate-600">Medisolve AI <span className="font-semibold text-purple-600">Centurion Suite</span></span>
+          </a>
           <div className="flex items-center gap-3 text-sm">
             {status === 'recording' && (
               <span className={`font-mono ${timeWarning ? 'text-red-500 font-bold animate-pulse' : duration >= targetMinutes * 60 * 0.8 ? 'text-orange-500' : 'text-slate-700'}`}>
@@ -446,7 +448,6 @@ export default function Home() {
                 <span className="text-slate-400 font-normal"> / {targetMinutes}분</span>
               </span>
             )}
-            <span className="text-slate-500">Charty Lite</span>
           </div>
         </div>
       </header>
