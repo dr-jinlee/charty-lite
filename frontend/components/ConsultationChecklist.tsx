@@ -14,6 +14,7 @@ interface ConsultationChecklistProps {
   consultType: string;
   transcriptText?: string;
   template?: 'first' | 'revisit' | 'post';
+  resetKey?: number;
 }
 
 const STATIC_CHECKS = [
@@ -155,19 +156,20 @@ const TEMPLATE_CHECKS: Record<string, { id: string; label: string; keywords: str
   ],
 };
 
-export default function ConsultationChecklist({ cart, consultType, transcriptText = '', template = 'first' }: ConsultationChecklistProps) {
+export default function ConsultationChecklist({ cart, consultType, transcriptText = '', template = 'first', resetKey = 0 }: ConsultationChecklistProps) {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [autoDetected, setAutoDetected] = useState<Set<string>>(new Set());
+
+  // 새 상담 시 리셋 (resetKey 변경 감지)
+  useEffect(() => {
+    if (resetKey > 0) { setChecked(new Set()); setAutoDetected(new Set()); prevTextLenRef.current = 0; }
+  }, [resetKey]);
   const prevTextLenRef = useRef(0);
 
   // STT 텍스트에서 키워드 감지 → 자동 체크
   useEffect(() => {
-    // 텍스트 초기화(새 상담) 시 자동감지도 리셋
-    if (transcriptText.length === 0) {
-      prevTextLenRef.current = 0;
-      setAutoDetected(new Set());
-      return;
-    }
+    // 텍스트가 줄어들면 무시 (STT가 빈 문자열 보내도 체크리스트 유지)
+    if (transcriptText.length === 0) { prevTextLenRef.current = 0; return; }
     if (transcriptText.length <= prevTextLenRef.current) {
       prevTextLenRef.current = transcriptText.length;
       return;

@@ -44,6 +44,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [manualText, setManualText] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
+  const [checklistResetKey, setChecklistResetKey] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 3패널 너비
@@ -258,9 +259,9 @@ export default function Home() {
         if (result.isFinal) finalText += text; else interimText += text;
       }
       if (interimText) {
+        sttFailCountRef.current = 0; // 인식 성공 시 실패 카운트 리셋
         setPartialText(correctText(interimText));
         setPartialSpeaker('unknown'); setIsSpeaking(true); setAudioLevel(0.7);
-        // 2단계: interim 선번역
         if (interpretMode) preTranslateInterim(correctText(interimText), targetLang);
       }
       if (finalText.trim()) {
@@ -279,6 +280,7 @@ export default function Home() {
     };
     recognition.onerror = (event: any) => {
       if (event.error === 'aborted') return;
+      if (event.error === 'not-allowed') { sttFailCountRef.current = MAX_STT_RETRIES; return; }
       sttFailCountRef.current++;
     };
     recognition.onend = () => {
@@ -393,6 +395,7 @@ export default function Home() {
     setStatus('idle'); setDuration(0); setTranscripts([]); setPartialText(null);
     setChart(''); setSummary(''); setRawTranscript(''); setIsGenerating(false);
     setManualText(''); setUploadStatus(''); setTimeWarning(false);
+    setChecklistResetKey(k => k + 1);
   }
   function handleGenerateFromCurrent() {
     const name = formatConsultant(consultType, doctorName, managerName);
@@ -572,7 +575,7 @@ export default function Home() {
 
         {/* 가운데: 체크리스트 */}
         <div style={{ width: colWidths[1] || '20%' }} className="flex flex-col min-w-0 flex-shrink-0">
-          <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} />
+          <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
 
         {/* 구분선 2 */}
