@@ -85,12 +85,17 @@ export default function Home() {
     };
   }, []);
 
-  // 초기 너비 (마운트 1회)
+  // 초기 너비 (마운트 후 확실히 계산)
   useEffect(() => {
-    if (containerRef.current) {
-      const w = containerRef.current.getBoundingClientRect().width;
-      setColWidths([w * 0.35, w * 0.2, w * 0.45]);
+    function calcWidths() {
+      if (containerRef.current) {
+        const w = containerRef.current.getBoundingClientRect().width;
+        if (w > 0) { setColWidths([w * 0.35, w * 0.2, w * 0.45]); return; }
+      }
+      // 컨테이너 아직 안 그려졌으면 재시도
+      requestAnimationFrame(calcWidths);
     }
+    calcWidths();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
