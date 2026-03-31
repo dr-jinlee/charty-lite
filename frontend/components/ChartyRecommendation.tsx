@@ -14,10 +14,21 @@ export default function ChartyRecommendation({ transcriptText }: ChartyRecommend
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
 
-  useEffect(() => { return () => { isMountedRef.current = false; }; }, []);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   useEffect(() => {
-    // 텍스트가 50자 이상 늘어날 때마다 추천 요청 (debounce 8초)
+    // 텍스트 초기화 시 리셋
+    if (!transcriptText || transcriptText.length === 0) {
+      prevLenRef.current = 0;
+      setRecommendation('');
+      return;
+    }
     if (transcriptText.length < 30) return;
     if (transcriptText.length - prevLenRef.current < 50) return;
 
@@ -26,23 +37,17 @@ export default function ChartyRecommendation({ transcriptText }: ChartyRecommend
       prevLenRef.current = transcriptText.length;
       fetchRecommendation(transcriptText);
     }, 3000);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [transcriptText]);
 
   async function fetchRecommendation(text: string) {
-    if (isLoading) return;
+    if (isLoading || !isMountedRef.current) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/procedure-info`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          keyword: '__recommendation__',
-          transcript: text.slice(-500),
-        }),
-      });
-      // procedure-info는 다른 용도라 별도 엔드포인트가 낫지만,
-      // 빠르게 구현하기 위해 interpret/translate의 customPrompt 활용
-      const res2 = await fetch(`${API_URL}/interpret/translate`, {
+      const res = await fetch(`${API_URL}/interpret/translate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -64,13 +69,15 @@ ${text.slice(-800)}
 한 줄 추천:`,
         }),
       });
-      const data = await res2.json();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
       const rec = data.translatedText || data.translation || '';
-      if (rec && isMountedRef.current) {
-        setRecommendation(rec);
-      }
-    } catch {}
-    if (isMountedRef.current) setIsLoading(false);
+      if (rec && isMountedRef.current) setRecommendation(rec);
+    } catch (err) {
+      console.warn('[Charty Pick] 추천 로드 실패:', err);
+    } finally {
+      if (isMountedRef.current) setIsLoading(false);
+    }
   }
 
   if (!recommendation && !isLoading) return null;
