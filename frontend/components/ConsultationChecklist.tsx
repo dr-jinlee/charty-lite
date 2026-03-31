@@ -274,7 +274,7 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
             return (
               <button key={id} onClick={() => toggle(id)}
                 className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
-                  done ? `${COLORS[color].on} opacity-50 scale-95` : COLORS[color].off
+                  done ? `${COLORS[color].on} opacity-40 scale-[0.85] text-[9px]` : COLORS[color].off
                 } ${autoDetected.has(id) && done ? `ring-1 ring-${color}-300` : ''}`}>
                 {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
               </button>
