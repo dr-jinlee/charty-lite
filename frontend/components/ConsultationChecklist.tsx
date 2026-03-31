@@ -25,8 +25,8 @@ const STATIC_CHECKS = [
   { id: 'past_sideeffect', label: '부작용이력', keywords: ['부작용', '문제', '부종', '괴사', '멍이', '부어', '아팠'] },
 ];
 
-// 고지사항 (상담사가 반드시 안내해야 할 항목)
-const NOTICE_CHECKS = [
+// 안내사항 (상담사가 반드시 안내해야 할 항목)
+const GUIDE_CHECKS = [
   { id: 'minor_side', label: '가벼운 부작용', keywords: ['멍', '붓기', '발적', '열감', '통증', '뻣뻣'] },
   { id: 'serious_side', label: '심각한 부작용', keywords: ['괴사', '혈관폐색', '감염', '화상', '신경손상', '실명'] },
   { id: 'downtime', label: '다운타임', keywords: ['다운타임', '회복기간', '쉬어야', '며칠', '일주일'] },
@@ -35,6 +35,8 @@ const NOTICE_CHECKS = [
   { id: 'sessions', label: '재시술 횟수', keywords: ['몇 번', '몇번', '회', '차', '횟수', '반복'] },
   { id: 'price', label: '가격안내', keywords: ['가격', '비용', '얼마', '만원', '원', '할인'] },
   { id: 'package', label: '다회권/회원권', keywords: ['다회권', '회원권', '패키지', '프로그램', '묶음', '세트'] },
+  { id: 'upsell', label: '업셀링', keywords: ['업그레이드', '더 좋은', '프리미엄', '고급', '추가하시면', '같이 하시면'] },
+  { id: 'crosssell', label: '크로스셀링', keywords: ['같이', '함께', '추천', '시너지', '콤보', '병행', '세트로'] },
 ];
 
 const PROCEDURE_CHECKS: Record<string, {
@@ -156,8 +158,8 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
       }
     }
 
-    // 고지사항 자동 감지
-    for (const item of NOTICE_CHECKS) {
+    // 안내사항 자동 감지
+    for (const item of GUIDE_CHECKS) {
       const id = `n-${item.id}`;
       if (!newAuto.has(id) && item.keywords.some(kw => textLower.includes(kw))) {
         newAuto.add(id);
@@ -207,7 +209,7 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
   }, [cart]);
 
   const staticDone = STATIC_CHECKS.filter(c => checked.has(`s-${c.id}`)).length;
-  const noticeDone = NOTICE_CHECKS.filter(c => checked.has(`n-${c.id}`)).length;
+  const guideDone = GUIDE_CHECKS.filter(c => checked.has(`n-${c.id}`)).length;
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -248,14 +250,14 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
           </div>
         </div>
 
-        {/* 고지사항 */}
+        {/* 안내사항 */}
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[11px] font-bold text-purple-600">고지사항</span>
-            <span className="text-[10px] text-slate-400">{noticeDone}/{NOTICE_CHECKS.length}</span>
+            <span className="text-[11px] font-bold text-purple-600">안내사항</span>
+            <span className="text-[10px] text-slate-400">{guideDone}/{GUIDE_CHECKS.length}</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {[...NOTICE_CHECKS].sort((a, b) => {
+            {[...GUIDE_CHECKS].sort((a, b) => {
               const aDone = checked.has(`n-${a.id}`) ? 1 : 0;
               const bDone = checked.has(`n-${b.id}`) ? 1 : 0;
               return aDone - bDone;
