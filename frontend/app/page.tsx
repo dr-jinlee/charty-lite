@@ -30,6 +30,9 @@ export default function Home() {
   const [sttLang, setSttLang] = useState<'ko' | 'en' | 'bilingual'>('ko');
   const [interpretMode, setInterpretMode] = useState(false);
   const [targetLang, setTargetLang] = useState('en');
+  const [targetMinutes, setTargetMinutes] = useState(15);
+  const [timeWarning, setTimeWarning] = useState(false);
+  const [consultTemplate, setConsultTemplate] = useState<'first' | 'revisit' | 'post'>('first');
 
   const [transcripts, setTranscripts] = useState<TranscriptEntry[]>([]);
   const [partialText, setPartialText] = useState<string | null>(null);
@@ -221,13 +224,17 @@ export default function Home() {
     return () => { window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); };
   }, []);
 
-  // 타이머
+  // 타이머 + 목표 시간 알림
   useEffect(() => {
     if (status === 'recording') {
-      timerRef.current = setInterval(() => setDuration(d => d + 1), 1000);
+      timerRef.current = setInterval(() => setDuration(d => {
+        const next = d + 1;
+        if (next === targetMinutes * 60) setTimeWarning(true);
+        return next;
+      }), 1000);
     } else if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [status]);
+  }, [status, targetMinutes]);
 
   // Google STT
   const restartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -385,7 +392,7 @@ export default function Home() {
   function handleReset() {
     setStatus('idle'); setDuration(0); setTranscripts([]); setPartialText(null);
     setChart(''); setSummary(''); setRawTranscript(''); setIsGenerating(false);
-    setManualText(''); setUploadStatus('');
+    setManualText(''); setUploadStatus(''); setTimeWarning(false);
   }
   function handleGenerateFromCurrent() {
     const name = formatConsultant(consultType, doctorName, managerName);
@@ -420,8 +427,9 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3 text-sm">
             {status === 'recording' && (
-              <span className="font-mono text-slate-700">
+              <span className={`font-mono ${timeWarning ? 'text-red-500 font-bold animate-pulse' : duration >= targetMinutes * 60 * 0.8 ? 'text-orange-500' : 'text-slate-700'}`}>
                 {Math.floor(duration / 60)}분 {duration % 60}초
+                <span className="text-slate-400 font-normal"> / {targetMinutes}분</span>
               </span>
             )}
             <span className="text-slate-500">Charty Lite</span>
@@ -483,6 +491,27 @@ export default function Home() {
                 onChange={(e) => consultType === 'doctor' ? setDoctorName(e.target.value) : setManagerName(e.target.value)}
                 placeholder="풀네임" className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 w-28 bg-white" />
             </div>
+            <div className="w-px h-8 bg-slate-200" />
+            <div>
+              <p className="text-[10px] text-slate-400 mb-0.5">목표 시간</p>
+              <select value={targetMinutes} onChange={e => setTargetMinutes(Number(e.target.value))}
+                className="text-sm border border-slate-200 rounded-lg px-2 py-1.5 bg-white">
+                <option value={10}>10분</option>
+                <option value={15}>15분</option>
+                <option value={20}>20분</option>
+                <option value={30}>30분</option>
+              </select>
+            </div>
+            <div className="w-px h-8 bg-slate-200" />
+            <div>
+              <p className="text-[10px] text-slate-400 mb-0.5">상담 유형</p>
+              <div className="flex items-center gap-1">
+                {([['first', '첫방문'], ['revisit', '재방문'], ['post', '시술후']] as [string, string][]).map(([key, label]) => (
+                  <button key={key} onClick={() => setConsultTemplate(key as any)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${consultTemplate === key ? 'bg-purple-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-100'}`}>{label}</button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -543,7 +572,7 @@ export default function Home() {
 
         {/* 가운데: 체크리스트 */}
         <div style={{ width: colWidths[1] || '20%' }} className="flex flex-col min-w-0 flex-shrink-0">
-          <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} />
+          <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} />
         </div>
 
         {/* 구분선 2 */}
@@ -560,6 +589,46 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* 상담 종료 요약 카드 */}
+      {status === 'done' && chart && (
+        <div className="bg-gradient-to-r from-purple-50 to-slate-50 px-6 py-2 flex-shrink-0">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-4">
+              <span className="text-purple-600 font-medium">
+                {consultTemplate === 'first' ? '첫방문' : consultTemplate === 'revisit' ? '재방문' : '시술후'} · {Math.max(1, Math.round(duration / 60))}분
+              </span>
+              <span className="text-slate-500">
+                녹취 {transcripts.length}건 · {transcripts.reduce((s, t) => s + t.text.length, 0)}자
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <button onClick={() => {
+                const text = rawTranscript || transcripts.map(t => t.text).join('\n');
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                a.download = `상담녹취_${new Date().toISOString().slice(0,10)}.txt`; a.click();
+              }} className="text-xs text-slate-500 hover:text-purple-600 transition-colors">
+                녹취 저장
+              </button>
+              <button onClick={() => {
+                const plain = chart.replace(/```/g, '').replace(/[━═──■]/g, '').replace(/\n{3,}/g, '\n\n').trim();
+                navigator.clipboard.writeText(plain);
+              }} className="text-xs text-slate-500 hover:text-purple-600 transition-colors">
+                차트 복사 (텍스트)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 시간 초과 알림 */}
+      {timeWarning && status === 'recording' && (
+        <div className="bg-red-50 px-6 py-1.5 flex items-center justify-between flex-shrink-0">
+          <span className="text-xs text-red-600 font-medium">목표 시간 {targetMinutes}분 초과</span>
+          <button onClick={() => setTimeWarning(false)} className="text-xs text-red-400 hover:text-red-600">닫기</button>
+        </div>
+      )}
 
       {/* 하단 컨트롤 */}
       {inputMode === 'voice' ? (

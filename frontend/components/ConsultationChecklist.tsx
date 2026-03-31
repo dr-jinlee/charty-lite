@@ -13,6 +13,7 @@ interface ConsultationChecklistProps {
   cart: CartItem[];
   consultType: string;
   transcriptText?: string;
+  template?: 'first' | 'revisit' | 'post';
 }
 
 const STATIC_CHECKS = [
@@ -126,7 +127,24 @@ const COLORS = {
   purple: { on: 'bg-purple-500 text-white border-purple-500', off: 'bg-white text-purple-600 border-purple-300 hover:bg-purple-50' },
 };
 
-export default function ConsultationChecklist({ cart, consultType, transcriptText = '' }: ConsultationChecklistProps) {
+// 템플릿별 추가 체크 항목
+const TEMPLATE_CHECKS: Record<string, { id: string; label: string; keywords: string[] }[]> = {
+  first: [
+    { id: 'tmpl_referral', label: '내원경로', keywords: ['어디서', '알고', '소개', '검색', '인스타', '지인'] },
+    { id: 'tmpl_expect', label: '기대사항', keywords: ['원하시는', '기대', '희망', '목표', '이상적'] },
+  ],
+  revisit: [
+    { id: 'tmpl_prev_result', label: '이전 결과', keywords: ['지난번', '저번에', '결과', '경과', '만족', '효과'] },
+    { id: 'tmpl_change', label: '변동사항', keywords: ['달라진', '변화', '최근', '요즘', '새로'] },
+  ],
+  post: [
+    { id: 'tmpl_recovery', label: '회복상태', keywords: ['회복', '나아졌', '괜찮', '아직', '불편'] },
+    { id: 'tmpl_sideeffect', label: '이상반응', keywords: ['이상', '아프', '부어', '멍', '따갑', '가렵'] },
+    { id: 'tmpl_nextcare', label: '후속관리', keywords: ['관리', '세안', '운동', '사우나', '자외선', '보습'] },
+  ],
+};
+
+export default function ConsultationChecklist({ cart, consultType, transcriptText = '', template = 'first' }: ConsultationChecklistProps) {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [autoDetected, setAutoDetected] = useState<Set<string>>(new Set());
   const prevTextLenRef = useRef(0);
@@ -155,6 +173,14 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
       if (!newAuto.has(id) && item.keywords.some(kw => textLower.includes(kw))) {
         newAuto.add(id);
         newChecked.add(id);
+      }
+    }
+
+    // 템플릿별 체크 자동 감지
+    for (const item of (TEMPLATE_CHECKS[template] || [])) {
+      const id = `t-${item.id}`;
+      if (!newAuto.has(id) && item.keywords.some(kw => textLower.includes(kw))) {
+        newAuto.add(id); newChecked.add(id);
       }
     }
 
@@ -249,6 +275,38 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
             })}
           </div>
         </div>
+
+        {/* 템플릿별 체크 */}
+        {(TEMPLATE_CHECKS[template] || []).length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-[11px] font-bold text-blue-600">
+                {template === 'first' ? '첫방문' : template === 'revisit' ? '재방문' : '시술후'}
+              </span>
+              <span className="text-[10px] text-slate-400">
+                {(TEMPLATE_CHECKS[template] || []).filter(c => checked.has(`t-${c.id}`)).length}/{(TEMPLATE_CHECKS[template] || []).length}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {[...(TEMPLATE_CHECKS[template] || [])].sort((a, b) => {
+                const aDone = checked.has(`t-${a.id}`) ? 1 : 0;
+                const bDone = checked.has(`t-${b.id}`) ? 1 : 0;
+                return aDone - bDone;
+              }).map(item => {
+                const id = `t-${item.id}`;
+                const done = checked.has(id);
+                return (
+                  <button key={id} onClick={() => toggle(id)}
+                    className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
+                      done ? `${COLORS.blue.on} opacity-50 scale-95` : COLORS.blue.off
+                    } ${autoDetected.has(id) && done ? 'ring-1 ring-blue-300' : ''}`}>
+                    {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* 안내사항 */}
         <div>
