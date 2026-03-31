@@ -364,6 +364,7 @@ export default function Home() {
     formData.append('audio', file);
     try {
       const res = await fetch(`${API_URL}/transcribe/file`, { method: 'POST', body: formData });
+      if (!res.ok) { alert('서버 오류: ' + res.status); setUploadStatus(''); return; }
       const data = await res.json();
       setUploadStatus('');
       if (data.error) { alert('변환 실패: ' + data.error); return; }

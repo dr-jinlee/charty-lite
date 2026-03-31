@@ -132,11 +132,11 @@ const PROCEDURE_CHECKS: Record<string, {
 };
 
 const COLORS = {
-  orange: { on: 'bg-orange-500 text-white border-orange-500', off: 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50' },
-  blue: { on: 'bg-blue-500 text-white border-blue-500', off: 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50' },
-  emerald: { on: 'bg-emerald-500 text-white border-emerald-500', off: 'bg-white text-emerald-600 border-emerald-300 hover:bg-emerald-50' },
-  green: { on: 'bg-green-500 text-white border-green-500', off: 'bg-white text-green-600 border-green-300 hover:bg-green-50' },
-  purple: { on: 'bg-purple-500 text-white border-purple-500', off: 'bg-white text-purple-600 border-purple-300 hover:bg-purple-50' },
+  orange: { on: 'bg-orange-500 text-white border-orange-500', off: 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50', ring: 'ring-1 ring-orange-300' },
+  blue: { on: 'bg-blue-500 text-white border-blue-500', off: 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50', ring: 'ring-1 ring-blue-300' },
+  emerald: { on: 'bg-emerald-500 text-white border-emerald-500', off: 'bg-white text-emerald-600 border-emerald-300 hover:bg-emerald-50', ring: 'ring-1 ring-emerald-300' },
+  green: { on: 'bg-green-500 text-white border-green-500', off: 'bg-white text-green-600 border-green-300 hover:bg-green-50', ring: 'ring-1 ring-green-300' },
+  purple: { on: 'bg-purple-500 text-white border-purple-500', off: 'bg-white text-purple-600 border-purple-300 hover:bg-purple-50', ring: 'ring-1 ring-purple-300' },
 };
 
 // 템플릿별 추가 체크 항목
@@ -277,7 +277,7 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
               <button key={id} onClick={() => toggle(id)}
                 className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
                   done ? `${COLORS[color].on} opacity-40 scale-[0.85] text-[9px]` : COLORS[color].off
-                } ${autoDetected.has(id) && done ? `ring-1 ring-${color}-300` : ''}`}>
+                } ${autoDetected.has(id) && done ? COLORS[color].ring : ''}`}>
                 {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
               </button>
             );
