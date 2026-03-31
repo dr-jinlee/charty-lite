@@ -61,6 +61,7 @@ export default function Home() {
     return [500, 300, 600];
   });
   const draggingColRef = useRef<number | null>(null);
+  const lastXRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // STT 용어 보정
@@ -223,32 +224,36 @@ export default function Home() {
     }, 3000);
   }
 
-  // 리사이즈 (movementX, 이벤트 1회 등록)
+  // 리사이즈 (clientX 추적 방식)
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
-      if (draggingColRef.current !== null) {
-        const idx = draggingColRef.current;
-        const delta = e.movementX;
-        if (delta === 0) return;
-        setColWidths(prev => {
-          const next = [...prev] as [number, number, number];
-          if (next[idx] + delta >= 150 && next[idx + 1] - delta >= 150) {
-            next[idx] += delta;
-            next[idx + 1] -= delta;
-            return next;
-          }
-          return prev;
-        });
-      }
+      if (draggingColRef.current === null) return;
+      e.preventDefault();
+      const idx = draggingColRef.current;
+      const delta = e.clientX - lastXRef.current;
+      lastXRef.current = e.clientX;
+      if (delta === 0) return;
+      const MIN = 100;
+      setColWidths(prev => {
+        const next = [...prev] as [number, number, number];
+        const newLeft = next[idx] + delta;
+        const newRight = next[idx + 1] - delta;
+        if (newLeft >= MIN && newRight >= MIN) {
+          next[idx] = newLeft;
+          next[idx + 1] = newRight;
+          return next;
+        }
+        return prev;
+      });
     }
     function onMouseUp() {
       draggingColRef.current = null;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     }
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
-    return () => { window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    return () => { document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
   }, []);
 
   // 타이머 + 목표 시간 알림
@@ -595,7 +600,7 @@ export default function Home() {
         </div>
 
         {/* 구분선 1 */}
-        <div onMouseDown={() => { draggingColRef.current = 0; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
+        <div onMouseDown={(e) => { draggingColRef.current = 0; lastXRef.current = e.clientX; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
           className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
 
         {/* 가운데: 추천 + 체크리스트 */}
@@ -605,7 +610,7 @@ export default function Home() {
         </div>
 
         {/* 구분선 2 */}
-        <div onMouseDown={() => { draggingColRef.current = 1; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
+        <div onMouseDown={(e) => { draggingColRef.current = 1; lastXRef.current = e.clientX; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
           className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
 
         {/* 오른쪽: 차트 */}
