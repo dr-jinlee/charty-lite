@@ -598,9 +598,7 @@ export default function Home() {
               <span className="text-purple-600 font-medium">
                 {consultTemplate === 'first' ? '첫방문' : consultTemplate === 'revisit' ? '재방문' : '시술후'} · {Math.max(1, Math.round(duration / 60))}분
               </span>
-              <span className="text-slate-500">
-                녹취 {transcripts.length}건 · {transcripts.reduce((s, t) => s + t.text.length, 0)}자
-              </span>
+              <span className="text-slate-500">{chartStyle === 'detailed' ? '상세형' : chartStyle === 'balanced' ? '절충형' : '요약형'}</span>
             </div>
             <div className="flex items-center gap-3">
               <button onClick={() => {
