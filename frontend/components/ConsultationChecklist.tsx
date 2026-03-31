@@ -24,6 +24,10 @@ const STATIC_CHECKS = [
   { id: 'keloid', label: '켈로이드', keywords: ['켈로이드', '흉터', '상처'] },
   { id: 'past_procedure', label: '시술이력', keywords: ['전에', '예전에', '저번에', '맞았', '했었', '받으신', '시술 받'] },
   { id: 'past_sideeffect', label: '부작용이력', keywords: ['부작용', '문제', '부종', '괴사', '멍이', '부어', '아팠'] },
+  { id: 'complaint', label: '고민/증상', keywords: ['고민', '걱정', '신경', '불편', '거슬리', '싫어', '콤플렉스'] },
+  { id: 'desired', label: '희망시술', keywords: ['받고 싶', '하고 싶', '맞고 싶', '관심', '알아보고', '해보고'] },
+  { id: 'budget', label: '예산', keywords: ['예산', '가격대', '얼마까지', '부담', '비용', '범위'] },
+  { id: 'urgency', label: '긴급도', keywords: ['급해', '언제까지', '행사', '결혼', '촬영', '여행', '빨리'] },
 ];
 
 // 안내사항 (상담사가 반드시 안내해야 할 항목)
