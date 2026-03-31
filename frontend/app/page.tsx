@@ -62,7 +62,19 @@ export default function Home() {
   const audioChunksRef = useRef<Blob[]>([]);
   const recorderMimeRef = useRef('audio/webm');
 
+  const isMountedRef = useRef(true);
+
   useEffect(() => { transcriptsRef.current = transcripts; }, [transcripts]);
+
+  // 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (recognitionRef.current) { try { recognitionRef.current.stop(); } catch {} recognitionRef.current = null; }
+      if (restartTimeoutRef.current) { clearTimeout(restartTimeoutRef.current); restartTimeoutRef.current = null; }
+      if (interimTranslateRef.current) { clearTimeout(interimTranslateRef.current); }
+    };
+  }, []);
 
   // 초기 너비 (마운트 1회)
   useEffect(() => {
@@ -136,13 +148,13 @@ export default function Home() {
     })
       .then(r => r.json())
       .then(data => {
+        if (!isMountedRef.current) return;
         const translated = data.translatedText || data.translation || '';
         if (translated) {
           setTranscripts(prev => prev.map(e =>
             e.id === entryId ? { ...e, translation: translated } : e
           ));
         }
-        // 4단계: 후보정 예약 (3초 후, 앞뒤 문맥 포함)
         schedulePostCorrection(entryId, text, translated, lang);
       })
       .catch(() => {});
@@ -171,7 +183,7 @@ export default function Home() {
         .then(r => r.json())
         .then(data => {
           const corrected = data.translatedText || data.translation || '';
-          if (corrected && corrected !== firstTranslation) {
+          if (corrected && corrected !== firstTranslation && isMountedRef.current) {
             setTranscripts(prev => prev.map(e =>
               e.id === entryId ? { ...e, translation: corrected } : e
             ));
@@ -219,6 +231,8 @@ export default function Home() {
 
   // Google STT
   const restartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sttFailCountRef = useRef(0);
+  const MAX_STT_RETRIES = 5;
 
   function createRecognition() {
     const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
@@ -256,23 +270,28 @@ export default function Home() {
         }
       }
     };
-    recognition.onerror = (event: any) => { if (event.error === 'aborted') return; };
+    recognition.onerror = (event: any) => {
+      if (event.error === 'aborted') return;
+      sttFailCountRef.current++;
+    };
     recognition.onend = () => {
-      if (recognitionRef.current) {
-        restartTimeoutRef.current = setTimeout(() => {
-          if (recognitionRef.current) {
-            try {
-              const newRecog = createRecognition();
-              if (newRecog) { newRecog.start(); recognitionRef.current = newRecog; }
-            } catch {}
-          }
-        }, 300);
+      if (!isMountedRef.current || !recognitionRef.current) return;
+      if (sttFailCountRef.current >= MAX_STT_RETRIES) {
+        console.warn('[STT] 재시작 한도 초과, 중지');
+        return;
       }
+      restartTimeoutRef.current = setTimeout(() => {
+        if (!isMountedRef.current || !recognitionRef.current) return;
+        try {
+          const newRecog = createRecognition();
+          if (newRecog) { newRecog.start(); recognitionRef.current = newRecog; sttFailCountRef.current = 0; }
+        } catch { sttFailCountRef.current++; }
+      }, 300);
     };
     return recognition;
   }
 
-  function startRecognition() { const r = createRecognition(); if (r) { r.start(); recognitionRef.current = r; } }
+  function startRecognition() { sttFailCountRef.current = 0; const r = createRecognition(); if (r) { r.start(); recognitionRef.current = r; } }
   function stopRecognition() {
     if (restartTimeoutRef.current) { clearTimeout(restartTimeoutRef.current); restartTimeoutRef.current = null; }
     if (recognitionRef.current) { const ref = recognitionRef.current; recognitionRef.current = null; try { ref.stop(); } catch {} }
