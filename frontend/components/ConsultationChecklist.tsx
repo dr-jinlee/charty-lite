@@ -155,7 +155,6 @@ const COLORS = {
 // 템플릿별 추가 체크 항목
 const TEMPLATE_CHECKS: Record<string, { id: string; label: string; keywords: string[] }[]> = {
   first: [
-    { id: 'tmpl_referral', label: '내원경로', keywords: ['어디서', '알고', '소개', '검색', '인스타', '지인'] },
     { id: 'tmpl_expect', label: '기대사항', keywords: ['원하시는', '기대', '희망', '목표', '이상적'] },
   ],
   revisit: [
