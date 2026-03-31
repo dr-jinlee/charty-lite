@@ -29,8 +29,8 @@ export default function ChartyRecommendation({ transcriptText }: ChartyRecommend
       setRecommendation('');
       return;
     }
-    if (transcriptText.length < 30) return;
-    if (transcriptText.length - prevLenRef.current < 50) return;
+    if (transcriptText.length < 15) return;
+    if (transcriptText.length - prevLenRef.current < 30) return;
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -80,16 +80,16 @@ ${text.slice(-800)}
     }
   }
 
-  if (!recommendation && !isLoading) return null;
-
   return (
     <div className="px-3 py-2 bg-gradient-to-r from-purple-50 to-white border-b border-purple-100 flex-shrink-0">
       <div className="flex items-center gap-2">
         <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider flex-shrink-0">Charty's Pick</span>
         {isLoading ? (
           <span className="text-[11px] text-slate-400 animate-pulse">분석 중...</span>
-        ) : (
+        ) : recommendation ? (
           <span className="text-[11px] text-purple-700 font-medium">{recommendation}</span>
+        ) : (
+          <span className="text-[11px] text-slate-300">상담이 진행되면 시술 추천이 나타납니다</span>
         )}
       </div>
     </div>
