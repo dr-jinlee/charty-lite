@@ -469,7 +469,7 @@ export default function Home() {
               </>
             )}
             <div>
-              <p className="text-[10px] text-slate-400 mb-0.5">상담 유형</p>
+              <p className="text-[10px] text-slate-400 mb-0.5">차트 스타일</p>
               <div className="flex items-center gap-1">
                 {([['detailed', '상세형'], ['balanced', '절충형'], ['summary', '요약형']] as [string, string][]).map(([key, label]) => (
                   <button key={key} onClick={() => setChartStyle(key as any)}
@@ -608,13 +608,15 @@ export default function Home() {
               <button onClick={() => {
                 const text = rawTranscript || transcripts.map(t => t.text).join('\n');
                 const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url;
                 a.download = `상담녹취_${new Date().toISOString().slice(0,10)}.txt`; a.click();
+                URL.revokeObjectURL(url);
               }} className="text-xs text-slate-500 hover:text-purple-600 transition-colors">
                 녹취 저장
               </button>
               <button onClick={() => {
-                const plain = chart.replace(/```/g, '').replace(/[━═──■]/g, '').replace(/\n{3,}/g, '\n\n').trim();
+                const plain = chart.replace(/```/g, '').replace(/[━═─■]/g, '').replace(/^\s*[\n]/gm, '').replace(/\n{3,}/g, '\n\n').trim();
                 navigator.clipboard.writeText(plain);
               }} className="text-xs text-slate-500 hover:text-purple-600 transition-colors">
                 차트 복사 (텍스트)
