@@ -129,8 +129,8 @@ export default function Home() {
     if (correctionRegexRef.current) {
       result = result.replace(correctionRegexRef.current, match => correctionsRef.current[match] || match);
     }
-    // 2) 중복 글자 후처리 ("보톡스스" → "보톡스", "필러러" → "필러")
-    result = result.replace(/(.)\1{2,}/g, '$1$1'); // 3연속 이상 → 2개로
+    // 2) 중복 글자 후처리
+    result = result.replace(/(.)\1{2,}/g, '$1$1');
     result = result.replace(/(톡스)스/g, '$1');
     result = result.replace(/(필러)러/g, '$1');
     result = result.replace(/(쎄라)라/g, '$1');
@@ -138,6 +138,33 @@ export default function Home() {
     result = result.replace(/(부스터)터/g, '$1');
     result = result.replace(/(쥬란)란/g, '$1');
     result = result.replace(/(베룩)룩/g, '$1');
+
+    // 3) 문맥 기반 음차 보정 (STT가 자주 틀리는 시술명)
+    const contextFixes: [RegExp, string][] = [
+      [/싱크/g, '슈링크'],
+      [/쉬링크/g, '슈링크'],
+      [/슈링 크/g, '슈링크'],
+      [/서머지/g, '써마지'],
+      [/떠마지/g, '써마지'],
+      [/얼떠라/g, '울쎄라'],
+      [/울떠라/g, '울쎄라'],
+      [/울세라/g, '울쎄라'],
+      [/주비 덤/g, '쥬비덤'],
+      [/주비덤/g, '쥬비덤'],
+      [/레주 란/g, '리쥬란'],
+      [/리주란/g, '리쥬란'],
+      [/레쥬란/g, '리쥬란'],
+      [/주베 룩/g, '쥬베룩'],
+      [/주베룩/g, '쥬베룩'],
+      [/엑소 좀/g, '엑소좀'],
+      [/스킨 부스터/g, '스킨부스터'],
+      [/피코 토닝/g, '피코토닝'],
+      [/포텐 자/g, '포텐자'],
+      [/인모 드/g, '인모드'],
+    ];
+    for (const [pattern, replacement] of contextFixes) {
+      result = result.replace(pattern, replacement);
+    }
     return result;
   }
 
@@ -605,7 +632,9 @@ export default function Home() {
 
         {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
-          <ChartyRecommendation transcriptText={transcriptText} />
+          <div className="flex-shrink-0 resize-y overflow-auto min-h-[40px] max-h-[200px]" style={{ height: 60 }}>
+            <ChartyRecommendation transcriptText={transcriptText} />
+          </div>
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
 

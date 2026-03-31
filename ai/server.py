@@ -586,6 +586,44 @@ def get_exchange_rates():
     return jsonify(result)
 
 
+@app.route("/recommend", methods=["POST"])
+def recommend_procedure():
+    """실시간 시술 추천 (한 줄)"""
+    data = request.get_json(silent=True)
+    if not data or not data.get("transcript", "").strip():
+        return jsonify({"recommendation": ""})
+
+    transcript = data["transcript"][-600:]
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        response = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=60,
+            messages=[{"role": "user", "content": f"""미용 클리닉 상담 녹취를 읽고, 추가 추천할 시술을 한 줄로 제안하세요.
+
+규칙:
+- 한 줄, 25자 이내
+- "~도 같이 추천해보세요" 형태
+- 현재 시술과 시너지 좋은 것만
+- 이미 언급된 시술은 추천하지 마세요
+- 추천할 게 없으면 빈 문자열만 반환
+
+녹취: {transcript}
+
+추천:"""}],
+        )
+        rec = response.content[0].text.strip().strip('"').strip("'")
+        if len(rec) > 50:
+            rec = ""
+        print(f"[추천] {rec}")
+        return jsonify({"recommendation": rec})
+    except Exception as e:
+        print(f"[추천] 실패: {e}")
+        return jsonify({"recommendation": ""})
+
+
 @app.route("/procedure-info", methods=["POST"])
 def procedure_info():
     """시술 정보 AI 생성 (Procedure Hub에 없을 때 폴백)"""

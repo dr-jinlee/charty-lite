@@ -47,32 +47,15 @@ export default function ChartyRecommendation({ transcriptText }: ChartyRecommend
     if (isLoading || !isMountedRef.current) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/interpret/translate`, {
+      const res = await fetch(`${API_URL}/recommend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: text.slice(-800),
-          sourceLang: 'ko',
-          targetLang: 'ko',
-          speakerRole: 'doctor',
-          customPrompt: `당신은 미용 클리닉 상담 보조 AI입니다. 아래 상담 녹취를 읽고, 상담사에게 추가로 추천할 시술을 한 줄로 제안하세요.
-규칙:
-- 반드시 한 줄, 30자 이내
-- "~도 같이 추천해보세요" 형태
-- 현재 언급된 시술과 시너지가 좋은 것만
-- 이미 언급된 시술은 추천하지 마세요
-- 추천할 게 없으면 "현재 상담이 잘 진행되고 있습니다" 라고만
-
-녹취:
-${text.slice(-800)}
-
-한 줄 추천:`,
-        }),
+        body: JSON.stringify({ transcript: text }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const rec = data.translatedText || data.translation || '';
-      if (rec && isMountedRef.current) setRecommendation(rec);
+      const rec = data.recommendation || '';
+      if (isMountedRef.current) setRecommendation(rec);
     } catch (err) {
       console.warn('[Charty Pick] 추천 로드 실패:', err);
     } finally {
