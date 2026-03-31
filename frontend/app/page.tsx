@@ -6,6 +6,7 @@ import ChartPreview from '@/components/ChartPreview';
 import SessionControls from '@/components/SessionControls';
 import ConsultationChecklist from '@/components/ConsultationChecklist';
 import ConsultationProgress from '@/components/ConsultationProgress';
+import ChartyRecommendation from '@/components/ChartyRecommendation';
 import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
 import { instantTranslate } from '@/lib/medicalDict';
@@ -110,8 +111,21 @@ export default function Home() {
   }, []);
 
   function correctText(text: string): string {
-    if (!correctionRegexRef.current) return text;
-    return text.replace(correctionRegexRef.current, match => correctionsRef.current[match] || match);
+    let result = text;
+    // 1) 사전 보정 (314개 매핑)
+    if (correctionRegexRef.current) {
+      result = result.replace(correctionRegexRef.current, match => correctionsRef.current[match] || match);
+    }
+    // 2) 중복 글자 후처리 ("보톡스스" → "보톡스", "필러러" → "필러")
+    result = result.replace(/(.)\1{2,}/g, '$1$1'); // 3연속 이상 → 2개로
+    result = result.replace(/(톡스)스/g, '$1');
+    result = result.replace(/(필러)러/g, '$1');
+    result = result.replace(/(쎄라)라/g, '$1');
+    result = result.replace(/(마지)지/g, '$1');
+    result = result.replace(/(부스터)터/g, '$1');
+    result = result.replace(/(쥬란)란/g, '$1');
+    result = result.replace(/(베룩)룩/g, '$1');
+    return result;
   }
 
   // ─── 통번역 4단계 파이프라인 ───
@@ -421,13 +435,9 @@ export default function Home() {
             <span className="text-sm font-bold text-[#191c1d] tracking-tight">charty</span>
             <span className="text-[10px] text-slate-400 ml-1">lite</span>
           </div>
-          <div className="flex items-center gap-6">
-            {([['voice', '실시간 녹음'], ['upload', '파일 업로드'], ['text', '텍스트 입력']] as [InputMode, string][]).map(([key, label]) => (
-              <button key={key}
-                onClick={() => { if (status === 'idle') { setInputMode(key); setTranscripts([]); setManualText(''); setUploadStatus(''); } }}
-                className={`text-sm font-medium py-3 border-b-2 transition-colors ${inputMode === key ? 'text-purple-600 border-purple-600' : 'text-slate-400 border-transparent hover:text-slate-600'}`}
-              >{label}</button>
-            ))}
+          {/* 배너 공간 */}
+          <div className="text-xs text-slate-400">
+            실시간 상담 차트 · Chrome 전용
           </div>
           <div className="flex items-center gap-3 text-sm">
             {status === 'recording' && (
@@ -574,8 +584,9 @@ export default function Home() {
         <div onMouseDown={() => { draggingColRef.current = 0; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
           className="w-1 hover:w-1.5 panel-divider cursor-col-resize flex-shrink-0" />
 
-        {/* 가운데: 체크리스트 */}
+        {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] || '20%' }} className="flex flex-col min-w-0 flex-shrink-0">
+          <ChartyRecommendation transcriptText={transcriptText} />
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
 
