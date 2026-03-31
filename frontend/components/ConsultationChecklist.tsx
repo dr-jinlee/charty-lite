@@ -23,8 +23,18 @@ const STATIC_CHECKS = [
   { id: 'keloid', label: '켈로이드', keywords: ['켈로이드', '흉터', '상처'] },
   { id: 'past_procedure', label: '시술이력', keywords: ['전에', '예전에', '저번에', '맞았', '했었', '받으신', '시술 받'] },
   { id: 'past_sideeffect', label: '부작용이력', keywords: ['부작용', '문제', '부종', '괴사', '멍이', '부어', '아팠'] },
-  { id: 'skin_condition', label: '피부상태', keywords: ['트러블', '염증', '여드름', '상처', '헤르페스', '피부 상태'] },
-  { id: 'consent', label: '동의서', keywords: ['동의서', '동의', '서명', '사인'] },
+];
+
+// 고지사항 (상담사가 반드시 안내해야 할 항목)
+const NOTICE_CHECKS = [
+  { id: 'minor_side', label: '가벼운 부작용', keywords: ['멍', '붓기', '발적', '열감', '통증', '뻣뻣'] },
+  { id: 'serious_side', label: '심각한 부작용', keywords: ['괴사', '혈관폐색', '감염', '화상', '신경손상', '실명'] },
+  { id: 'downtime', label: '다운타임', keywords: ['다운타임', '회복기간', '쉬어야', '며칠', '일주일'] },
+  { id: 'duration', label: '시술유지기간', keywords: ['유지기간', '유지', '지속', '개월', '오래가'] },
+  { id: 'cycle', label: '재시술 주기', keywords: ['주기', '간격', '다음에', '후에 다시', '개월마다', '주마다'] },
+  { id: 'sessions', label: '재시술 횟수', keywords: ['몇 번', '몇번', '회', '차', '횟수', '반복'] },
+  { id: 'price', label: '가격안내', keywords: ['가격', '비용', '얼마', '만원', '원', '할인'] },
+  { id: 'package', label: '다회권/회원권', keywords: ['다회권', '회원권', '패키지', '프로그램', '묶음', '세트'] },
 ];
 
 const PROCEDURE_CHECKS: Record<string, {
@@ -111,6 +121,7 @@ const COLORS = {
   blue: { on: 'bg-blue-500 text-white border-blue-500', off: 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50' },
   emerald: { on: 'bg-emerald-500 text-white border-emerald-500', off: 'bg-white text-emerald-600 border-emerald-300 hover:bg-emerald-50' },
   green: { on: 'bg-green-500 text-white border-green-500', off: 'bg-white text-green-600 border-green-300 hover:bg-green-50' },
+  purple: { on: 'bg-purple-500 text-white border-purple-500', off: 'bg-white text-purple-600 border-purple-300 hover:bg-purple-50' },
 };
 
 export default function ConsultationChecklist({ cart, consultType, transcriptText = '' }: ConsultationChecklistProps) {
@@ -139,6 +150,15 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
     // 정적 체크 자동 감지
     for (const item of STATIC_CHECKS) {
       const id = `s-${item.id}`;
+      if (!newAuto.has(id) && item.keywords.some(kw => textLower.includes(kw))) {
+        newAuto.add(id);
+        newChecked.add(id);
+      }
+    }
+
+    // 고지사항 자동 감지
+    for (const item of NOTICE_CHECKS) {
+      const id = `n-${item.id}`;
       if (!newAuto.has(id) && item.keywords.some(kw => textLower.includes(kw))) {
         newAuto.add(id);
         newChecked.add(id);
@@ -187,6 +207,7 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
   }, [cart]);
 
   const staticDone = STATIC_CHECKS.filter(c => checked.has(`s-${c.id}`)).length;
+  const noticeDone = NOTICE_CHECKS.filter(c => checked.has(`n-${c.id}`)).length;
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -216,6 +237,28 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
                   className={`text-[11px] px-2 py-1 rounded-full border transition-all ${
                     done ? COLORS.green.on : COLORS.green.off
                   } ${autoDetected.has(id) && done ? 'ring-1 ring-green-300' : ''}`}>
+                  {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 고지사항 */}
+        <div>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[11px] font-bold text-purple-600">고지사항</span>
+            <span className="text-[10px] text-slate-400">{noticeDone}/{NOTICE_CHECKS.length}</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {NOTICE_CHECKS.map(item => {
+              const id = `n-${item.id}`;
+              const done = checked.has(id);
+              return (
+                <button key={id} onClick={() => toggle(id)}
+                  className={`text-[11px] px-2 py-1 rounded-full border transition-all ${
+                    done ? COLORS.purple.on : COLORS.purple.off
+                  } ${autoDetected.has(id) && done ? 'ring-1 ring-purple-300' : ''}`}>
                   {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
                 </button>
               );
