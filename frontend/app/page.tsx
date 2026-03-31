@@ -48,6 +48,7 @@ export default function Home() {
   const [checklistResetKey, setChecklistResetKey] = useState(0);
   const [evalResult, setEvalResult] = useState<any>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [showEval, setShowEval] = useState(false);
   const [salesAmount, setSalesAmount] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -414,7 +415,7 @@ export default function Home() {
     setChart(''); setSummary(''); setRawTranscript(''); setIsGenerating(false);
     setManualText(''); setUploadStatus(''); setTimeWarning(false);
     setChecklistResetKey(k => k + 1);
-    setEvalResult(null); setSalesAmount('');
+    setEvalResult(null); setShowEval(false); setSalesAmount('');
   }
   function handleGenerateFromCurrent() {
     const name = formatConsultant(consultType, doctorName, managerName);
@@ -611,127 +612,147 @@ export default function Home() {
         </div>
       </main>
 
-      {/* 상담 종료 요약 + 평가 */}
+      {/* 상담 종료 요약 바 */}
       {status === 'done' && chart && (
-        <div className="bg-gradient-to-r from-purple-50 to-slate-50 px-6 py-3 flex-shrink-0 border-t border-purple-100">
-          <div className="flex items-start gap-6">
-            {/* 왼쪽: 요약 + 버튼 */}
-            <div className="flex-shrink-0 space-y-2">
-              <div className="flex items-center gap-3 text-sm">
-                <span className="text-purple-600 font-semibold">
-                  {consultTemplate === 'first' ? '첫방문' : consultTemplate === 'revisit' ? '재방문' : '시술후'} · {Math.max(1, Math.round(duration / 60))}분
-                </span>
-                <span className="text-slate-400">{chartStyle === 'detailed' ? '상세형' : chartStyle === 'balanced' ? '절충형' : '요약형'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => {
-                  const text = rawTranscript || transcripts.map(t => t.text).join('\n');
-                  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a'); a.href = url;
-                  a.download = `상담녹취_${new Date().toISOString().slice(0,10)}.txt`; a.click();
-                  URL.revokeObjectURL(url);
-                }} className="text-[11px] px-2 py-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-purple-600 transition-colors">
-                  녹취 저장
-                </button>
-                <button onClick={() => {
-                  const plain = chart.replace(/```/g, '').replace(/[━═─■]/g, '').replace(/^\s*[\n]/gm, '').replace(/\n{3,}/g, '\n\n').trim();
-                  navigator.clipboard.writeText(plain);
-                }} className="text-[11px] px-2 py-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-purple-600 transition-colors">
-                  차트 복사
-                </button>
-                {!evalResult && (
-                  <button onClick={async () => {
-                    setIsEvaluating(true);
-                    try {
-                      const res = await fetch(`${API_URL}/consultation/evaluate`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chart, transcript: rawTranscript, cartItems: [], duration }),
-                      });
-                      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                      const data = await res.json();
-                      setEvalResult(data);
-                    } catch { alert('평가 실패'); }
-                    setIsEvaluating(false);
-                  }} disabled={isEvaluating}
-                    className="text-[11px] px-3 py-1 rounded bg-purple-600 text-white hover:bg-purple-700 disabled:bg-purple-300 transition-colors font-medium">
-                    {isEvaluating ? '평가 중...' : '상담 평가하기'}
-                  </button>
-                )}
-              </div>
-              {/* 매출 입력 */}
-              <div className="flex items-center gap-2">
+        <div className="bg-gradient-to-r from-purple-50 to-slate-50 px-6 py-2 flex-shrink-0 border-t border-purple-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm">
+              <span className="text-purple-600 font-semibold">
+                {consultTemplate === 'first' ? '첫방문' : consultTemplate === 'revisit' ? '재방문' : '시술후'} · {Math.max(1, Math.round(duration / 60))}분
+              </span>
+              <span className="text-slate-400">{chartStyle === 'detailed' ? '상세형' : chartStyle === 'balanced' ? '절충형' : '요약형'}</span>
+              <div className="flex items-center gap-1.5 ml-2">
                 <span className="text-[10px] text-slate-400">매출</span>
                 <input type="text" value={salesAmount} onChange={e => setSalesAmount(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="금액 입력" className="text-xs border border-slate-200 rounded px-2 py-1 w-24 bg-white" />
+                  placeholder="금액" className="text-xs border border-slate-200 rounded px-2 py-0.5 w-20 bg-white" />
                 <span className="text-[10px] text-slate-400">원</span>
                 {salesAmount && (
-                  <span className="text-[11px] text-purple-600 font-medium">
+                  <span className="text-[11px] text-purple-600 font-bold">
                     {Math.round(Number(salesAmount) / Math.max(1, Math.round(duration / 60))).toLocaleString()}원/분
                   </span>
                 )}
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => {
+                const text = rawTranscript || transcripts.map(t => t.text).join('\n');
+                const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url;
+                a.download = `상담녹취_${new Date().toISOString().slice(0,10)}.txt`; a.click();
+                URL.revokeObjectURL(url);
+              }} className="text-[11px] px-2 py-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-purple-600">녹취 저장</button>
+              <button onClick={() => {
+                const plain = chart.replace(/```/g, '').replace(/[━═─■]/g, '').replace(/^\s*[\n]/gm, '').replace(/\n{3,}/g, '\n\n').trim();
+                navigator.clipboard.writeText(plain);
+              }} className="text-[11px] px-2 py-1 rounded bg-white border border-slate-200 text-slate-500 hover:text-purple-600">차트 복사</button>
+              <button onClick={async () => {
+                if (evalResult) { setShowEval(true); return; }
+                setIsEvaluating(true); setShowEval(true);
+                try {
+                  const res = await fetch(`${API_URL}/consultation/evaluate`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chart, transcript: rawTranscript, cartItems: [], duration }),
+                  });
+                  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                  setEvalResult(await res.json());
+                } catch { alert('평가 실패'); }
+                setIsEvaluating(false);
+              }} className="text-[11px] px-3 py-1 rounded bg-purple-600 text-white hover:bg-purple-700 font-medium">
+                상담 평가하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-            {/* 오른쪽: 평가 결과 (5각형 + 한줄평 + 잘한점/개선점) */}
-            {evalResult && (
-              <div className="flex-1 flex items-start gap-4 min-w-0">
-                {/* 5각형 */}
-                <div className="flex-shrink-0">
+      {/* 평가 모달 */}
+      {showEval && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowEval(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-[520px] max-h-[80vh] overflow-auto p-6" onClick={e => e.stopPropagation()}>
+            {isEvaluating ? (
+              <div className="flex flex-col items-center py-12 gap-3">
+                <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+                <p className="text-sm text-slate-500">상담을 평가하고 있습니다...</p>
+              </div>
+            ) : evalResult ? (
+              <div className="space-y-4">
+                {/* 헤더 */}
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-slate-800 font-headline">상담 평가</h2>
+                  <button onClick={() => setShowEval(false)} className="text-slate-400 hover:text-slate-600 text-lg">×</button>
+                </div>
+
+                {/* 상담 정보 */}
+                <div className="flex items-center gap-3 text-xs text-slate-500 pb-2 border-b border-slate-100">
+                  <span>{consultTemplate === 'first' ? '첫방문' : consultTemplate === 'revisit' ? '재방문' : '시술후'}</span>
+                  <span>{Math.max(1, Math.round(duration / 60))}분</span>
+                  {salesAmount && <span>매출 {Number(salesAmount).toLocaleString()}원 · {Math.round(Number(salesAmount) / Math.max(1, Math.round(duration / 60))).toLocaleString()}원/분</span>}
+                </div>
+
+                {/* 점수 + 5각형 */}
+                <div className="flex items-center gap-4">
                   <canvas ref={(canvas) => {
                     if (!canvas || !evalResult.metrics) return;
                     const ctx = canvas.getContext('2d');
                     if (!ctx) return;
-                    const size = 140; canvas.width = size * 2; canvas.height = size * 2; ctx.scale(2, 2);
-                    const center = size / 2; const radius = 45; const count = evalResult.metrics.length;
+                    const size = 180; canvas.width = size * 2; canvas.height = size * 2; ctx.scale(2, 2);
+                    const center = size / 2; const radius = 55; const count = evalResult.metrics.length;
                     const angleStep = (Math.PI * 2) / count; const startAngle = -Math.PI / 2;
                     ctx.clearRect(0, 0, size, size);
-                    // 배경 동심원
                     for (const r of [0.2, 0.4, 0.6, 0.8, 1.0]) {
                       ctx.beginPath();
-                      for (let i = 0; i <= count; i++) { const a = startAngle + angleStep * (i % count); const x = center + Math.cos(a) * radius * r; const y = center + Math.sin(a) * radius * r; i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+                      for (let i = 0; i <= count; i++) { const a = startAngle + angleStep * (i % count); ctx.lineTo(center + Math.cos(a) * radius * r, center + Math.sin(a) * radius * r); }
                       ctx.closePath(); ctx.strokeStyle = '#E2E8F0'; ctx.lineWidth = 0.5; ctx.stroke();
                     }
-                    // 데이터
+                    for (let i = 0; i < count; i++) { const a = startAngle + angleStep * i; ctx.beginPath(); ctx.moveTo(center, center); ctx.lineTo(center + Math.cos(a) * radius, center + Math.sin(a) * radius); ctx.strokeStyle = '#E2E8F0'; ctx.lineWidth = 0.3; ctx.stroke(); }
                     ctx.beginPath();
-                    for (let i = 0; i <= count; i++) { const a = startAngle + angleStep * (i % count); const v = evalResult.metrics[i % count].score / 100; const x = center + Math.cos(a) * radius * v; const y = center + Math.sin(a) * radius * v; i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+                    for (let i = 0; i <= count; i++) { const a = startAngle + angleStep * (i % count); const v = evalResult.metrics[i % count].score / 100; ctx.lineTo(center + Math.cos(a) * radius * v, center + Math.sin(a) * radius * v); }
                     ctx.closePath();
                     const grad = ctx.createRadialGradient(center, center, 0, center, center, radius);
-                    grad.addColorStop(0, 'rgba(124,58,237,0.35)'); grad.addColorStop(1, 'rgba(124,58,237,0.05)');
+                    grad.addColorStop(0, 'rgba(124,58,237,0.3)'); grad.addColorStop(1, 'rgba(124,58,237,0.05)');
                     ctx.fillStyle = grad; ctx.fill();
-                    ctx.shadowColor = 'rgba(124,58,237,0.4)'; ctx.shadowBlur = 6; ctx.strokeStyle = '#7C3AED'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.shadowBlur = 0;
-                    // 라벨
-                    ctx.font = '9px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#475569';
-                    for (let i = 0; i < count; i++) { const a = startAngle + angleStep * i; ctx.fillText(`${evalResult.metrics[i].emoji}${evalResult.metrics[i].name}`, center + Math.cos(a) * (radius + 18), center + Math.sin(a) * (radius + 18)); }
-                  }} style={{ width: 140, height: 140 }} />
+                    ctx.shadowColor = 'rgba(124,58,237,0.4)'; ctx.shadowBlur = 8; ctx.strokeStyle = '#7C3AED'; ctx.lineWidth = 2; ctx.stroke(); ctx.shadowBlur = 0;
+                    for (let i = 0; i < count; i++) { const a = startAngle + angleStep * i; const v = evalResult.metrics[i].score / 100; const x = center + Math.cos(a) * radius * v; const y = center + Math.sin(a) * radius * v; ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fillStyle = '#7C3AED'; ctx.fill(); }
+                    ctx.font = '10px Inter, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#475569';
+                    for (let i = 0; i < count; i++) { const a = startAngle + angleStep * i; ctx.fillText(`${evalResult.metrics[i].emoji}${evalResult.metrics[i].name}`, center + Math.cos(a) * (radius + 22), center + Math.sin(a) * (radius + 22)); }
+                  }} style={{ width: 180, height: 180 }} className="flex-shrink-0" />
+
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className={`text-3xl font-black ${evalResult.score >= 80 ? 'text-green-600' : evalResult.score >= 60 ? 'text-blue-600' : 'text-orange-600'}`}>{evalResult.grade}</span>
+                      <span className="text-xl font-bold text-slate-700">{evalResult.score}<span className="text-sm text-slate-400 font-normal">점</span></span>
+                    </div>
+                    <p className="text-sm text-slate-500">{evalResult.summary}</p>
+                    {evalResult.metrics?.map((m: any, i: number) => (
+                      <div key={i} className="flex items-center gap-2 text-xs">
+                        <span className="w-16 text-slate-500">{m.emoji} {m.name}</span>
+                        <div className="flex-1 h-1.5 bg-slate-100 rounded-full">
+                          <div className={`h-full rounded-full ${m.score >= 80 ? 'bg-green-500' : m.score >= 60 ? 'bg-blue-500' : 'bg-orange-500'}`} style={{ width: `${m.score}%` }} />
+                        </div>
+                        <span className="text-slate-600 font-medium w-6 text-right">{m.score}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* 점수 + 한줄평 + 잘한점/개선점 */}
-                <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-lg font-black ${evalResult.score >= 80 ? 'text-green-600' : evalResult.score >= 60 ? 'text-blue-600' : 'text-orange-600'}`}>
-                      {evalResult.grade}
-                    </span>
-                    <span className="text-sm font-bold text-slate-700">{evalResult.score}점</span>
-                    <span className="text-[11px] text-slate-400">{evalResult.summary}</span>
+                {/* 잘한 점 / 개선할 점 */}
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                  <div className="bg-green-50 rounded-xl p-3">
+                    <p className="text-[10px] font-bold text-green-700 mb-1.5">잘한 점</p>
+                    {(evalResult.strengths || []).slice(0, 3).map((s: string, i: number) => (
+                      <p key={i} className="text-[11px] text-green-600 mb-0.5">· {s}</p>
+                    ))}
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-[9px] font-bold text-green-600 mb-0.5">잘한 점</p>
-                      {(evalResult.strengths || []).slice(0, 3).map((s: string, i: number) => (
-                        <p key={i} className="text-[10px] text-green-700">· {s}</p>
-                      ))}
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-bold text-orange-600 mb-0.5">개선할 점</p>
-                      {(evalResult.improvements || []).slice(0, 3).map((s: string, i: number) => (
-                        <p key={i} className="text-[10px] text-orange-700">· {s}</p>
-                      ))}
-                    </div>
+                  <div className="bg-orange-50 rounded-xl p-3">
+                    <p className="text-[10px] font-bold text-orange-700 mb-1.5">개선할 점</p>
+                    {(evalResult.improvements || []).slice(0, 3).map((s: string, i: number) => (
+                      <p key={i} className="text-[11px] text-orange-600 mb-0.5">· {s}</p>
+                    ))}
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}
