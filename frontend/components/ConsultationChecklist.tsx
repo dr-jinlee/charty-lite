@@ -17,31 +17,38 @@ interface ConsultationChecklistProps {
 }
 
 const STATIC_CHECKS = [
-  { id: 'allergy', label: '알레르기', keywords: ['알레르기', '알러지', '과민', '두드러기'] },
-  { id: 'medication', label: '복용약물', keywords: ['약', '복용', '아스피린', '혈전', '오메가', '한약', '영양제', '비타민'] },
-  { id: 'disease', label: '기저질환', keywords: ['고혈압', '당뇨', '질환', '간', '갑상선', '심장'] },
-  { id: 'pregnancy', label: '임신·수유', keywords: ['임신', '수유', '생리', '피임'] },
-  { id: 'keloid', label: '켈로이드', keywords: ['켈로이드', '흉터', '상처'] },
-  { id: 'past_procedure', label: '시술이력', keywords: ['전에', '예전에', '저번에', '맞았', '했었', '받으신', '시술 받'] },
-  { id: 'past_sideeffect', label: '부작용이력', keywords: ['부작용', '문제', '부종', '괴사', '멍이', '부어', '아팠'] },
-  { id: 'complaint', label: '고민/증상', keywords: ['고민', '걱정', '신경', '불편', '거슬리', '싫어', '콤플렉스'] },
-  { id: 'desired', label: '희망시술', keywords: ['받고 싶', '하고 싶', '맞고 싶', '관심', '알아보고', '해보고'] },
-  { id: 'budget', label: '예산', keywords: ['예산', '가격대', '얼마까지', '부담', '비용', '범위'] },
-  { id: 'urgency', label: '긴급도', keywords: ['급해', '언제까지', '행사', '결혼', '촬영', '여행', '빨리'] },
+  // 상담 목적
+  { id: 'complaint', label: '고민/증상', keywords: ['고민', '걱정', '신경', '불편', '거슬리', '싫어', '콤플렉스'], group: '상담 목적' },
+  { id: 'desired', label: '희망시술', keywords: ['받고 싶', '하고 싶', '맞고 싶', '관심', '알아보고', '해보고'], group: '상담 목적' },
+  { id: 'budget', label: '예산', keywords: ['예산', '가격대', '얼마까지', '부담', '비용', '범위'], group: '상담 목적' },
+  { id: 'urgency', label: '긴급도', keywords: ['급해', '언제까지', '행사', '결혼', '촬영', '여행', '빨리'], group: '상담 목적' },
+  // 의료 안전
+  { id: 'allergy', label: '알레르기', keywords: ['알레르기', '알러지', '과민', '두드러기'], group: '의료 안전' },
+  { id: 'medication', label: '복용약물', keywords: ['약', '복용', '아스피린', '혈전', '오메가', '한약', '영양제', '비타민'], group: '의료 안전' },
+  { id: 'disease', label: '기저질환', keywords: ['고혈압', '당뇨', '질환', '간', '갑상선', '심장'], group: '의료 안전' },
+  { id: 'pregnancy', label: '임신·수유', keywords: ['임신', '수유', '생리', '피임'], group: '의료 안전' },
+  { id: 'keloid', label: '켈로이드', keywords: ['켈로이드', '흉터', '상처'], group: '의료 안전' },
+  // 이력
+  { id: 'past_procedure', label: '시술이력', keywords: ['전에', '예전에', '저번에', '맞았', '했었', '받으신', '시술 받'], group: '이력' },
+  { id: 'past_sideeffect', label: '부작용이력', keywords: ['부작용', '문제', '부종', '괴사', '멍이', '부어', '아팠'], group: '이력' },
 ];
 
 // 안내사항 (상담사가 반드시 안내해야 할 항목)
 const GUIDE_CHECKS = [
-  { id: 'minor_side', label: '가벼운 부작용', keywords: ['멍', '붓기', '발적', '열감', '통증', '뻣뻣'] },
-  { id: 'serious_side', label: '심각한 부작용', keywords: ['괴사', '혈관폐색', '감염', '화상', '신경손상', '실명'] },
-  { id: 'downtime', label: '다운타임', keywords: ['다운타임', '회복기간', '쉬어야', '며칠', '일주일'] },
-  { id: 'duration', label: '시술유지기간', keywords: ['유지기간', '유지', '지속', '개월', '오래가'] },
-  { id: 'cycle', label: '재시술 주기', keywords: ['주기', '간격', '다음에', '후에 다시', '개월마다', '주마다'] },
-  { id: 'sessions', label: '재시술 횟수', keywords: ['몇 번', '몇번', '회', '차', '횟수', '반복'] },
-  { id: 'price', label: '가격안내', keywords: ['가격', '비용', '얼마', '만원', '원', '할인'] },
-  { id: 'package', label: '다회권/회원권', keywords: ['다회권', '회원권', '패키지', '프로그램', '묶음', '세트'] },
-  { id: 'upsell', label: '업셀링', keywords: ['업그레이드', '더 좋은', '프리미엄', '고급', '추가하시면', '같이 하시면'] },
-  { id: 'crosssell', label: '크로스셀링', keywords: ['같이', '함께', '추천', '시너지', '콤보', '병행', '세트로'] },
+  // 부작용
+  { id: 'minor_side', label: '가벼운 부작용', keywords: ['멍', '붓기', '발적', '열감', '통증', '뻣뻣'], group: '부작용' },
+  { id: 'serious_side', label: '심각한 부작용', keywords: ['괴사', '혈관폐색', '감염', '화상', '신경손상', '실명'], group: '부작용' },
+  // 시술 정보
+  { id: 'downtime', label: '다운타임', keywords: ['다운타임', '회복기간', '쉬어야', '며칠', '일주일'], group: '시술 정보' },
+  { id: 'duration', label: '시술유지기간', keywords: ['유지기간', '유지', '지속', '개월', '오래가'], group: '시술 정보' },
+  { id: 'cycle', label: '재시술 주기', keywords: ['주기', '간격', '다음에', '후에 다시', '개월마다', '주마다'], group: '시술 정보' },
+  { id: 'sessions', label: '재시술 횟수', keywords: ['몇 번', '몇번', '회', '차', '횟수', '반복'], group: '시술 정보' },
+  // 가격
+  { id: 'price', label: '가격안내', keywords: ['가격', '비용', '얼마', '만원', '원', '할인'], group: '가격' },
+  { id: 'package', label: '다회권/회원권', keywords: ['다회권', '회원권', '패키지', '프로그램', '묶음', '세트'], group: '가격' },
+  // 영업
+  { id: 'upsell', label: '업셀링', keywords: ['업그레이드', '더 좋은', '프리미엄', '고급', '추가하시면', '같이 하시면'], group: '영업' },
+  { id: 'crosssell', label: '크로스셀링', keywords: ['같이', '함께', '추천', '시너지', '콤보', '병행', '세트로'], group: '영업' },
 ];
 
 const PROCEDURE_CHECKS: Record<string, {
@@ -241,6 +248,43 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
   const staticDone = STATIC_CHECKS.filter(c => checked.has(`s-${c.id}`)).length;
   const guideDone = GUIDE_CHECKS.filter(c => checked.has(`n-${c.id}`)).length;
 
+  // 그룹별로 정렬 + 렌더링 헬퍼
+  function renderGroupedChecks(
+    items: { id: string; label: string; group?: string }[],
+    prefix: string,
+    color: keyof typeof COLORS,
+  ) {
+    const groups: Record<string, typeof items> = {};
+    for (const item of items) {
+      const g = (item as any).group || '기타';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(item);
+    }
+    return Object.entries(groups).map(([groupName, groupItems]) => (
+      <div key={groupName} className="mb-1.5">
+        <span className="text-[9px] text-slate-400">{groupName}</span>
+        <div className="flex flex-wrap gap-1 mt-0.5">
+          {[...groupItems].sort((a, b) => {
+            const aDone = checked.has(`${prefix}-${a.id}`) ? 1 : 0;
+            const bDone = checked.has(`${prefix}-${b.id}`) ? 1 : 0;
+            return aDone - bDone;
+          }).map(item => {
+            const id = `${prefix}-${item.id}`;
+            const done = checked.has(id);
+            return (
+              <button key={id} onClick={() => toggle(id)}
+                className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
+                  done ? `${COLORS[color].on} opacity-50 scale-95` : COLORS[color].off
+                } ${autoDetected.has(id) && done ? `ring-1 ring-${color}-300` : ''}`}>
+                {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    ));
+  }
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* 헤더 */}
@@ -260,24 +304,7 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
             <span className="text-[11px] font-bold text-slate-600">필수 확인</span>
             <span className="text-[10px] text-slate-400">{staticDone}/{STATIC_CHECKS.length}</span>
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {[...STATIC_CHECKS].sort((a, b) => {
-              const aDone = checked.has(`s-${a.id}`) ? 1 : 0;
-              const bDone = checked.has(`s-${b.id}`) ? 1 : 0;
-              return aDone - bDone;
-            }).map(item => {
-              const id = `s-${item.id}`;
-              const done = checked.has(id);
-              return (
-                <button key={id} onClick={() => toggle(id)}
-                  className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
-                    done ? `${COLORS.green.on} opacity-50 scale-95` : COLORS.green.off
-                  } ${autoDetected.has(id) && done ? 'ring-1 ring-green-300' : ''}`}>
-                  {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
-                </button>
-              );
-            })}
-          </div>
+          {renderGroupedChecks(STATIC_CHECKS, 's', 'green')}
         </div>
 
         {/* 템플릿별 체크 */}
@@ -318,24 +345,7 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
             <span className="text-[11px] font-bold text-purple-600">안내사항</span>
             <span className="text-[10px] text-slate-400">{guideDone}/{GUIDE_CHECKS.length}</span>
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {[...GUIDE_CHECKS].sort((a, b) => {
-              const aDone = checked.has(`n-${a.id}`) ? 1 : 0;
-              const bDone = checked.has(`n-${b.id}`) ? 1 : 0;
-              return aDone - bDone;
-            }).map(item => {
-              const id = `n-${item.id}`;
-              const done = checked.has(id);
-              return (
-                <button key={id} onClick={() => toggle(id)}
-                  className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
-                    done ? `${COLORS.purple.on} opacity-50 scale-95` : COLORS.purple.off
-                  } ${autoDetected.has(id) && done ? 'ring-1 ring-purple-300' : ''}`}>
-                  {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
-                </button>
-              );
-            })}
-          </div>
+          {renderGroupedChecks(GUIDE_CHECKS, 'n', 'purple')}
         </div>
 
         {/* 동적: 시술별 체크 */}
