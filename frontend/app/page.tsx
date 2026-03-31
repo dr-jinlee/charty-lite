@@ -588,7 +588,7 @@ export default function Home() {
 
         {/* 구분선 1 */}
         <div onMouseDown={() => { draggingColRef.current = 0; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
-          className="w-1 hover:w-1.5 panel-divider cursor-col-resize flex-shrink-0" />
+          className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
 
         {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] || '20%' }} className="flex flex-col min-w-0 flex-shrink-0">
@@ -598,7 +598,7 @@ export default function Home() {
 
         {/* 구분선 2 */}
         <div onMouseDown={() => { draggingColRef.current = 1; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
-          className="w-1 hover:w-1.5 panel-divider cursor-col-resize flex-shrink-0" />
+          className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
 
         {/* 오른쪽: 차트 */}
         <div style={{ width: colWidths[2] || '45%' }} className="flex flex-col min-w-0 flex-shrink-0">
