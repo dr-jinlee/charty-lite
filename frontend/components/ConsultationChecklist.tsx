@@ -229,13 +229,17 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
             <span className="text-[10px] text-slate-400">{staticDone}/{STATIC_CHECKS.length}</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {STATIC_CHECKS.map(item => {
+            {[...STATIC_CHECKS].sort((a, b) => {
+              const aDone = checked.has(`s-${a.id}`) ? 1 : 0;
+              const bDone = checked.has(`s-${b.id}`) ? 1 : 0;
+              return aDone - bDone;
+            }).map(item => {
               const id = `s-${item.id}`;
               const done = checked.has(id);
               return (
                 <button key={id} onClick={() => toggle(id)}
-                  className={`text-[11px] px-2 py-1 rounded-full border transition-all ${
-                    done ? COLORS.green.on : COLORS.green.off
+                  className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
+                    done ? `${COLORS.green.on} opacity-50 scale-95` : COLORS.green.off
                   } ${autoDetected.has(id) && done ? 'ring-1 ring-green-300' : ''}`}>
                   {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
                 </button>
@@ -251,13 +255,17 @@ export default function ConsultationChecklist({ cart, consultType, transcriptTex
             <span className="text-[10px] text-slate-400">{noticeDone}/{NOTICE_CHECKS.length}</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {NOTICE_CHECKS.map(item => {
+            {[...NOTICE_CHECKS].sort((a, b) => {
+              const aDone = checked.has(`n-${a.id}`) ? 1 : 0;
+              const bDone = checked.has(`n-${b.id}`) ? 1 : 0;
+              return aDone - bDone;
+            }).map(item => {
               const id = `n-${item.id}`;
               const done = checked.has(id);
               return (
                 <button key={id} onClick={() => toggle(id)}
-                  className={`text-[11px] px-2 py-1 rounded-full border transition-all ${
-                    done ? COLORS.purple.on : COLORS.purple.off
+                  className={`text-[11px] px-2 py-1 rounded-full border transition-all duration-300 ${
+                    done ? `${COLORS.purple.on} opacity-50 scale-95` : COLORS.purple.off
                   } ${autoDetected.has(id) && done ? 'ring-1 ring-purple-300' : ''}`}>
                   {done && <span className="mr-0.5">{autoDetected.has(id) ? '⚡' : '✓'}</span>}{item.label}
                 </button>
