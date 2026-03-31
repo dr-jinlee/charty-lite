@@ -102,7 +102,7 @@ export function instantTranslate(text: string, lang: string): string | null {
   for (const key of sortedKeys) {
     const dict = MEDICAL_DICT[key];
     if (dict[lang] && result.includes(key)) {
-      result = result.replace(key, `${key}(${dict[lang]})`);
+      result = result.replaceAll(key, `${key}(${dict[lang]})`);
     }
   }
   return result;

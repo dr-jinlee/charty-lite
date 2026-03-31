@@ -100,7 +100,6 @@ export default function Home() {
 
   // ─── 통번역 4단계 파이프라인 ───
   const interimTranslateRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const postCorrectionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 1단계: 사전 매칭 (0ms, 클라이언트)
   function dictTranslate(text: string, lang: string): string | null {
@@ -149,10 +148,9 @@ export default function Home() {
       .catch(() => {});
   }
 
-  // 4단계: 후보정 (3초 후, 주변 문장 문맥 포함하여 자연스럽게)
+  // 4단계: 후보정 (3초 후, 각 문장 독립 실행 — 레이스 컨디션 없음)
   function schedulePostCorrection(entryId: string, original: string, firstTranslation: string, lang: string) {
-    if (postCorrectionRef.current) clearTimeout(postCorrectionRef.current);
-    postCorrectionRef.current = setTimeout(() => {
+    setTimeout(() => {
       // 앞뒤 문장 문맥 수집
       const allTexts = transcriptsRef.current;
       const idx = allTexts.findIndex(e => e.id === entryId);
