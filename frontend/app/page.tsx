@@ -52,8 +52,14 @@ export default function Home() {
   const [salesAmount, setSalesAmount] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 3패널 너비
-  const [colWidths, setColWidths] = useState<[number, number, number]>([0, 0, 0]);
+  // 3패널 너비 (px, 초기값은 화면 기준으로 계산)
+  const [colWidths, setColWidths] = useState<[number, number, number]>(() => {
+    if (typeof window !== 'undefined') {
+      const w = window.innerWidth;
+      return [w * 0.35, w * 0.2, w * 0.45];
+    }
+    return [500, 300, 600];
+  });
   const draggingColRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -85,17 +91,14 @@ export default function Home() {
     };
   }, []);
 
-  // 초기 너비 (마운트 후 확실히 계산)
+  // 컨테이너 마운트 후 실제 너비로 보정
   useEffect(() => {
-    function calcWidths() {
+    requestAnimationFrame(() => {
       if (containerRef.current) {
         const w = containerRef.current.getBoundingClientRect().width;
-        if (w > 0) { setColWidths([w * 0.35, w * 0.2, w * 0.45]); return; }
+        if (w > 0) setColWidths([w * 0.35, w * 0.2, w * 0.45]);
       }
-      // 컨테이너 아직 안 그려졌으면 재시도
-      requestAnimationFrame(calcWidths);
-    }
-    calcWidths();
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -547,7 +550,7 @@ export default function Home() {
       {/* 메인 3패널 */}
       <main ref={containerRef} className="flex-1 flex overflow-hidden">
         {/* 왼쪽: 실시간 기록 */}
-        <div style={{ width: colWidths[0] || '35%' }} className="flex flex-col min-w-0 flex-shrink-0">
+        <div style={{ width: colWidths[0] }} className="flex flex-col min-w-0 flex-shrink-0">
           <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
             {inputMode === 'voice' && (
               <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
@@ -596,7 +599,7 @@ export default function Home() {
           className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
 
         {/* 가운데: 추천 + 체크리스트 */}
-        <div style={{ width: colWidths[1] || '20%' }} className="flex flex-col min-w-0 flex-shrink-0">
+        <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
           <ChartyRecommendation transcriptText={transcriptText} />
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
@@ -606,7 +609,7 @@ export default function Home() {
           className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
 
         {/* 오른쪽: 차트 */}
-        <div style={{ width: colWidths[2] || '45%' }} className="flex flex-col min-w-0 flex-shrink-0">
+        <div style={{ width: colWidths[2] }} className="flex flex-col min-w-0 flex-shrink-0">
           <div className="flex-1 p-4 overflow-hidden flex flex-col">
             <ChartPreview
               chart={chart} summary={summary} isGenerating={isGenerating} rawTranscript={rawTranscript}
