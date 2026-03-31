@@ -440,13 +440,6 @@ export default function Home() {
             <span className="text-sm font-bold text-[#191c1d] tracking-tight">charty</span>
             <span className="text-[10px] text-slate-400 ml-1">lite</span>
           </div>
-          {/* 배너 */}
-          <a href="https://www.medisolveai.com" target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-3 px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-all shadow-md hover:shadow-lg">
-            <span className="text-[9px] font-bold text-purple-200 uppercase tracking-wider border border-purple-400 px-1.5 py-0.5 rounded">AD</span>
-            <span className="text-sm text-white font-medium">Medisolve AI <span className="font-bold">Centurion Suite</span></span>
-            <span className="text-[10px] text-purple-200">→</span>
-          </a>
           <div className="flex items-center gap-3 text-sm">
             {status === 'recording' && (
               <span className={`font-mono ${timeWarning ? 'text-red-500 font-bold animate-pulse' : duration >= targetMinutes * 60 * 0.8 ? 'text-orange-500' : 'text-slate-700'}`}>
@@ -454,6 +447,12 @@ export default function Home() {
                 <span className="text-slate-400 font-normal"> / {targetMinutes}분</span>
               </span>
             )}
+            {/* 배너 */}
+            <a href="https://www.medisolveai.com" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-all shadow-sm hover:shadow-md">
+              <span className="text-[8px] font-bold text-purple-200 uppercase tracking-wider border border-purple-400 px-1 py-px rounded">AD</span>
+              <span className="text-xs text-white font-medium">Medisolve AI <span className="font-bold">Centurion Suite</span></span>
+            </a>
           </div>
         </div>
       </header>
