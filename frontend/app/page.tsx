@@ -10,6 +10,7 @@ import ChartyRecommendation from '@/components/ChartyRecommendation';
 import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
 import { instantTranslate } from '@/lib/medicalDict';
+import { retroCorrect, correctBySimilarity } from '@/lib/contextCorrector';
 
 type AppStatus = 'idle' | 'recording' | 'paused' | 'processing' | 'done';
 type InputMode = 'voice' | 'upload' | 'text';
@@ -165,6 +166,10 @@ export default function Home() {
     for (const [pattern, replacement] of contextFixes) {
       result = result.replace(pattern, replacement);
     }
+
+    // 4) 유사도 기반 시술명 교정 (편집 거리 ≤ 2)
+    result = correctBySimilarity(result);
+
     return result;
   }
 
@@ -334,6 +339,18 @@ export default function Home() {
         if (interpretMode) {
           translateFinal(entryId, corrected, targetLang);
         }
+
+        // 슬라이딩 윈도우 역보정: 이전 세그먼트를 새 문맥으로 재검증
+        setTimeout(() => {
+          const current = transcriptsRef.current;
+          const fixes = retroCorrect(current, 3);
+          if (fixes.length > 0) {
+            setTranscripts(prev => prev.map(e => {
+              const fix = fixes.find(f => f.id === e.id);
+              return fix ? { ...e, text: fix.corrected } : e;
+            }));
+          }
+        }, 500);
       }
     };
     recognition.onerror = (event: any) => {
