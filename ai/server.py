@@ -600,15 +600,16 @@ def recommend_procedure():
         client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         response = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=60,
-            messages=[{"role": "user", "content": f"""미용 클리닉 상담 녹취를 읽고, 추가 추천할 시술을 한 줄로 제안하세요.
+            max_tokens=40,
+            system="너는 미용 클리닉 시술 추천 봇이다. 대화하지 마라. 시술명만 추천하라. 질문하지 마라. 설명하지 마라.",
+            messages=[{"role": "user", "content": f"""아래 상담 녹취에서 언급된 시술과 시너지가 좋은 추가 시술 1개를 추천하라.
 
 규칙:
-- 한 줄, 25자 이내
-- "~도 같이 추천해보세요" 형태
-- 현재 시술과 시너지 좋은 것만
-- 이미 언급된 시술은 추천하지 마세요
-- 추천할 게 없으면 빈 문자열만 반환
+- "OO도 같이 추천해보세요" 형식으로 딱 한 줄만 출력
+- 25자 이내
+- 이미 언급된 시술은 제외
+- 추천할 게 없으면 빈 줄만 출력
+- 절대 대화하지 마라
 
 녹취: {transcript}
 
