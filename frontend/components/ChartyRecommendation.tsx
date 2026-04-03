@@ -64,7 +64,7 @@ export default function ChartyRecommendation({ transcriptText }: ChartyRecommend
   }
 
   return (
-    <div className="px-3 py-2 bg-gradient-to-r from-purple-50 to-white border-b border-purple-100 flex-shrink-0">
+    <div className="px-3 py-1 bg-gradient-to-r from-purple-50 to-white border-b border-purple-100 flex-shrink-0">
       <div className="flex items-center gap-2">
         <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider flex-shrink-0">Charty's Pick</span>
         {isLoading ? (
