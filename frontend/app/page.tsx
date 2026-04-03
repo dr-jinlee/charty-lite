@@ -47,6 +47,9 @@ export default function Home() {
   const [manualText, setManualText] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
   const [checklistResetKey, setChecklistResetKey] = useState(0);
+  const [pickHeight, setPickHeight] = useState(32);
+  const isDraggingPickRef = useRef(false);
+  const lastPickYRef = useRef(0);
   const [evalResult, setEvalResult] = useState<any>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [showEval, setShowEval] = useState(false);
@@ -259,6 +262,14 @@ export default function Home() {
   // 리사이즈 (clientX 추적 방식)
   useEffect(() => {
     function onMouseMove(e: MouseEvent) {
+      // Charty's Pick 높이 조절
+      if (isDraggingPickRef.current) {
+        e.preventDefault();
+        const delta = e.clientY - lastPickYRef.current;
+        lastPickYRef.current = e.clientY;
+        setPickHeight(prev => Math.max(28, Math.min(prev + delta, 200)));
+        return;
+      }
       if (draggingColRef.current === null) return;
       e.preventDefault();
       const idx = draggingColRef.current;
@@ -280,6 +291,7 @@ export default function Home() {
     }
     function onMouseUp() {
       draggingColRef.current = null;
+      isDraggingPickRef.current = false;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     }
@@ -649,9 +661,11 @@ export default function Home() {
 
         {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
-          <div className="flex-shrink-0 resize-y overflow-auto min-h-[28px] max-h-[150px] border-b border-slate-100" style={{ height: 28 }}>
+          <div style={{ height: pickHeight }} className="flex-shrink-0 overflow-hidden">
             <ChartyRecommendation transcriptText={transcriptText} />
           </div>
+          <div onMouseDown={(e) => { isDraggingPickRef.current = true; lastPickYRef.current = e.clientY; document.body.style.cursor = 'row-resize'; document.body.style.userSelect = 'none'; }}
+            className="h-1 hover:h-1.5 bg-slate-200 hover:bg-purple-300 cursor-row-resize flex-shrink-0 transition-all active:bg-purple-400" />
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
 
