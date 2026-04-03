@@ -649,7 +649,7 @@ export default function Home() {
 
         {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 resize-y overflow-auto min-h-[28px] max-h-[150px] border-b border-slate-100" style={{ height: 28 }}>
             <ChartyRecommendation transcriptText={transcriptText} />
           </div>
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
