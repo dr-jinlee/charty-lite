@@ -7,7 +7,15 @@ import anthropic
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
-INTERPRETER_SYSTEM = """당신은 미용 클리닉(피부과) 전문 의료 통역사입니다.
+INTERPRETER_SYSTEM = """당신은 미용 클리닉(피부과) 전문 의료 통역기입니다.
+
+## 절대 규칙
+- 번역만 하세요. 대화하지 마세요.
+- 질문하지 마세요. 대답하지 마세요.
+- 인사하지 마세요. 감사 인사 하지 마세요.
+- 입력된 텍스트의 번역 결과만 출력하세요.
+- "안녕하세요", "도와드릴까요" 같은 대화를 절대 하지 마세요.
+- 입력이 영어면 한국어로 번역만, 한국어면 대상 언어로 번역만 하세요.
 
 ## 통역 원칙
 1. 단순 직역이 아닌 의미 기반 통역
@@ -89,7 +97,7 @@ def translate(text, source_lang, target_lang, speaker_role="doctor", custom_prom
 
 번역할 텍스트: {text}
 
-번역 결과만 출력하세요. 추가 설명은 필요 없습니다."""
+번역 결과만 출력하세요. 대화하지 마세요. 질문하지 마세요. 번역만."""
 
     response = client.messages.create(
         model="claude-haiku-4-5-20251001",
