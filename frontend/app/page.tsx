@@ -579,10 +579,11 @@ export default function Home() {
       {/* 상담 흐름 가이드 */}
       <ConsultationProgress transcriptText={transcriptText} />
 
-      {/* 메인 3패널 */}
-      <main ref={containerRef} className="flex-1 flex overflow-hidden">
+      {/* 메인 3패널 (CSS Grid) */}
+      <main ref={containerRef} className="flex-1 overflow-hidden"
+        style={{ display: 'grid', gridTemplateColumns: `${colWidths[0]}px 8px ${colWidths[1]}px 8px ${colWidths[2]}px` }}>
         {/* 왼쪽: 실시간 기록 */}
-        <div style={{ width: colWidths[0] }} className="flex flex-col min-w-0 flex-shrink-0 overflow-hidden">
+        <div className="flex flex-col min-w-0 overflow-hidden">
           <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
             {inputMode === 'voice' && (
               <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
@@ -628,10 +629,10 @@ export default function Home() {
 
         {/* 구분선 1 */}
         <div {...divider0}
-          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none select-none">&nbsp;</div>
+          className="bg-slate-200 hover:bg-purple-300 cursor-col-resize transition-colors active:bg-purple-400 select-none">&nbsp;</div>
 
         {/* 가운데: 추천 + 체크리스트 */}
-        <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0 overflow-hidden">
+        <div className="flex flex-col min-w-0 overflow-hidden">
           <div style={{ height: pickHeight }} className="flex-shrink-0 overflow-hidden">
             <ChartyRecommendation transcriptText={transcriptText} />
           </div>
@@ -644,10 +645,10 @@ export default function Home() {
 
         {/* 구분선 2 */}
         <div {...divider1}
-          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none select-none">&nbsp;</div>
+          className="bg-slate-200 hover:bg-purple-300 cursor-col-resize transition-colors active:bg-purple-400 select-none">&nbsp;</div>
 
         {/* 오른쪽: 차트 */}
-        <div style={{ width: colWidths[2] }} className="flex flex-col min-w-0 flex-shrink-0 overflow-hidden">
+        <div className="flex flex-col min-w-0 overflow-hidden">
           <div className="flex-1 p-4 overflow-hidden flex flex-col">
             <ChartPreview
               chart={chart} summary={summary} isGenerating={isGenerating} rawTranscript={rawTranscript}
