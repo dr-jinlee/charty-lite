@@ -1,34 +1,81 @@
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 
-export function useDragResize(
-  direction: 'horizontal' | 'vertical',
-  onDelta: (delta: number) => void,
+// 패널 리사이즈 — 시작점 기반 (delta 누적 에러 없음)
+export function usePanelResize(
+  getSizes: () => number[],
+  setSizes: (sizes: number[]) => void,
+  leftIdx: number,
+  rightIdx: number,
+  containerRef: React.RefObject<HTMLElement | null>,
+  minPx: number = 80,
 ) {
-  const lastPos = useRef(0);
-
-  const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
-    lastPos.current = direction === 'horizontal' ? e.clientX : e.clientY;
-    document.body.style.cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize';
+    const startX = e.clientX;
+    const startSizes = [...getSizes()];
+    const container = containerRef.current;
+    if (!container) return;
+    const containerWidth = container.getBoundingClientRect().width;
+
+    document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
 
-    function onMove(ev: PointerEvent) {
-      const pos = direction === 'horizontal' ? ev.clientX : ev.clientY;
-      const delta = pos - lastPos.current;
-      lastPos.current = pos;
-      if (delta !== 0) onDelta(delta);
-    }
+    const onMouseMove = (ev: MouseEvent) => {
+      const dx = ev.clientX - startX;
+      const newLeft = startSizes[leftIdx] + dx;
+      const newRight = startSizes[rightIdx] - dx;
+      if (newLeft >= minPx && newRight >= minPx) {
+        const next = [...startSizes];
+        next[leftIdx] = newLeft;
+        next[rightIdx] = newRight;
+        setSizes(next);
+      }
+    };
 
-    function onUp() {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
-    }
+    };
 
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-  }, [direction, onDelta]);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
 
-  return { onPointerDown };
+  return { onMouseDown };
+}
+
+// 높이 리사이즈 (Charty's Pick 등)
+export function useHeightResize(
+  getHeight: () => number,
+  setHeight: (h: number) => void,
+  min: number = 28,
+  max: number = 200,
+) {
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startH = getHeight();
+
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+
+    const onMouseMove = (ev: MouseEvent) => {
+      const dy = ev.clientY - startY;
+      setHeight(Math.max(min, Math.min(startH + dy, max)));
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  return { onMouseDown };
 }

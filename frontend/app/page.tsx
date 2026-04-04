@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TranscriptView, { TranscriptEntry } from '@/components/TranscriptView';
 import ChartPreview from '@/components/ChartPreview';
 import SessionControls from '@/components/SessionControls';
@@ -11,7 +11,7 @@ import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
 import { instantTranslate } from '@/lib/medicalDict';
 import { retroCorrect, correctBySimilarity } from '@/lib/contextCorrector';
-import { useDragResize } from '@/lib/useResize';
+import { usePanelResize, useHeightResize } from '@/lib/useResize';
 
 type AppStatus = 'idle' | 'recording' | 'paused' | 'processing' | 'done';
 type InputMode = 'voice' | 'upload' | 'text';
@@ -59,31 +59,23 @@ export default function Home() {
   const [colWidths, setColWidths] = useState<[number, number, number]>([500, 280, 620]);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // 마운트 시 컨테이너 실제 너비로 초기화
   useEffect(() => {
     if (containerRef.current) {
-      const w = containerRef.current.getBoundingClientRect().width - 16; // 구분선 2개 × 8px
+      const w = containerRef.current.getBoundingClientRect().width - 16;
       setColWidths([w * 0.35, w * 0.2, w * 0.45]);
     }
   }, []);
 
-  // 리사이즈 훅
-  const divider0 = useDragResize('horizontal', useCallback((delta: number) => {
-    setColWidths(prev => {
-      const n = [...prev] as [number, number, number];
-      if (n[0] + delta >= 100 && n[1] - delta >= 100) { n[0] += delta; n[1] -= delta; return n; }
-      return prev;
-    });
-  }, []));
-  const divider1 = useDragResize('horizontal', useCallback((delta: number) => {
-    setColWidths(prev => {
-      const n = [...prev] as [number, number, number];
-      if (n[1] + delta >= 100 && n[2] - delta >= 100) { n[1] += delta; n[2] -= delta; return n; }
-      return prev;
-    });
-  }, []));
-  const pickDivider = useDragResize('vertical', useCallback((delta: number) => {
-    setPickHeight(prev => Math.max(28, Math.min(prev + delta, 200)));
-  }, []));
+  // 리사이즈 (시작점 기반 — delta 누적 에러 없음)
+  const colWidthsRef = useRef(colWidths);
+  colWidthsRef.current = colWidths;
+  const pickHeightRef = useRef(pickHeight);
+  pickHeightRef.current = pickHeight;
+
+  const divider0 = usePanelResize(() => colWidthsRef.current, (s) => setColWidths(s as [number,number,number]), 0, 1, containerRef);
+  const divider1 = usePanelResize(() => colWidthsRef.current, (s) => setColWidths(s as [number,number,number]), 1, 2, containerRef);
+  const pickDivider = useHeightResize(() => pickHeightRef.current, setPickHeight);
 
   // STT 용어 보정
   const [corrections, setCorrections] = useState<Record<string, string>>({});
