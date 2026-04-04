@@ -66,28 +66,23 @@ export default function Home() {
     }
   }, []);
 
-  // 리사이즈 훅 (boolean 반환 → delta 거부 시 snap 방지)
+  // 리사이즈 훅
   const divider0 = useDragResize('horizontal', useCallback((delta: number) => {
-    let ok = false;
     setColWidths(prev => {
       const n = [...prev] as [number, number, number];
-      if (n[0] + delta >= 100 && n[1] - delta >= 100) { n[0] += delta; n[1] -= delta; ok = true; return n; }
+      if (n[0] + delta >= 100 && n[1] - delta >= 100) { n[0] += delta; n[1] -= delta; return n; }
       return prev;
     });
-    return ok;
   }, []));
   const divider1 = useDragResize('horizontal', useCallback((delta: number) => {
-    let ok = false;
     setColWidths(prev => {
       const n = [...prev] as [number, number, number];
-      if (n[1] + delta >= 100 && n[2] - delta >= 100) { n[1] += delta; n[2] -= delta; ok = true; return n; }
+      if (n[1] + delta >= 100 && n[2] - delta >= 100) { n[1] += delta; n[2] -= delta; return n; }
       return prev;
     });
-    return ok;
   }, []));
   const pickDivider = useDragResize('vertical', useCallback((delta: number) => {
     setPickHeight(prev => Math.max(28, Math.min(prev + delta, 200)));
-    return true;
   }, []));
 
   // STT 용어 보정
