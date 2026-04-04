@@ -548,49 +548,59 @@ export default function Home() {
 
       {/* 메인 3패널 (react-resizable-panels) */}
       <PanelGroup className="flex-1" style={{ display: 'flex', flexDirection: 'row' }}>
-        {/* 왼쪽: 실시간 기록 */}
+        {/* 왼쪽: 실시간 기록 (위아래 리사이즈) */}
         <Panel defaultSize={35} minSize={10}>
-          <div className="h-full p-4 flex flex-col overflow-hidden">
-            {inputMode === 'voice' && (
-              <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
-                isInterpreting={interpretMode} targetLang={targetLang} partialTranslation={partialTranslation} />
-            )}
-            {inputMode === 'upload' && status === 'idle' && (
-              <div className="flex flex-col h-full">
-                <h2 className="text-xs font-semibold text-slate-400 mb-2">녹음 파일 업로드</h2>
-                <input ref={fileInputRef} type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm,.mp4" className="hidden"
-                  onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }} />
-                {transcripts.length === 0 ? (
-                  <div onClick={() => fileInputRef.current?.click()}
-                    className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-slate-400 hover:bg-slate-50 transition-colors">
-                    <p className="text-slate-600 font-medium mb-1">클릭하여 파일 선택</p>
-                    <p className="text-slate-400 text-sm">MP3, WAV, M4A, OGG 지원</p>
-                    {uploadStatus && <p className="mt-3 text-sm text-blue-600">{uploadStatus}</p>}
-                  </div>
-                ) : (
-                  <div className="flex-1 overflow-y-auto">
-                    <textarea value={transcripts[0]?.text || ''} onChange={(e) => setTranscripts([{ id: 'upload-edit', speaker: 'unknown', text: e.target.value, lang: 'ko', timestamp: Date.now() }])}
-                      className="w-full h-64 text-sm leading-relaxed resize-none focus:outline-none bg-white border border-slate-200 rounded-lg p-3" />
-                    {uploadStatus && <p className="text-sm text-green-600 mt-1">{uploadStatus}</p>}
+          <PanelGroup className="h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+            <Panel defaultSize={70} minSize={20}>
+              <div className="h-full p-4 flex flex-col overflow-hidden">
+                {inputMode === 'voice' && (
+                  <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
+                    isInterpreting={interpretMode} targetLang={targetLang} partialTranslation={partialTranslation} />
+                )}
+                {inputMode === 'upload' && status === 'idle' && (
+                  <div className="flex flex-col h-full">
+                    <h2 className="text-xs font-semibold text-slate-400 mb-2">녹음 파일 업로드</h2>
+                    <input ref={fileInputRef} type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.webm,.mp4" className="hidden"
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }} />
+                    {transcripts.length === 0 ? (
+                      <div onClick={() => fileInputRef.current?.click()}
+                        className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-slate-400 hover:bg-slate-50 transition-colors">
+                        <p className="text-slate-600 font-medium mb-1">클릭하여 파일 선택</p>
+                        <p className="text-slate-400 text-sm">MP3, WAV, M4A, OGG 지원</p>
+                        {uploadStatus && <p className="mt-3 text-sm text-blue-600">{uploadStatus}</p>}
+                      </div>
+                    ) : (
+                      <div className="flex-1 overflow-y-auto">
+                        <textarea value={transcripts[0]?.text || ''} onChange={(e) => setTranscripts([{ id: 'upload-edit', speaker: 'unknown', text: e.target.value, lang: 'ko', timestamp: Date.now() }])}
+                          className="w-full h-64 text-sm leading-relaxed resize-none focus:outline-none bg-white border border-slate-200 rounded-lg p-3" />
+                        {uploadStatus && <p className="text-sm text-green-600 mt-1">{uploadStatus}</p>}
+                      </div>
+                    )}
                   </div>
                 )}
+                {inputMode === 'text' && status === 'idle' && (
+                  <div className="flex flex-col h-full">
+                    <h2 className="text-xs font-semibold text-slate-400 mb-2">상담 텍스트 입력</h2>
+                    <textarea value={manualText} onChange={(e) => setManualText(e.target.value)}
+                      placeholder="상담 내용을 입력하세요..."
+                      className="flex-1 w-full p-3 text-sm leading-relaxed bg-white border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-200" />
+                    <p className="text-xs text-slate-400 mt-1">{manualText.length}자</p>
+                  </div>
+                )}
+                {inputMode !== 'voice' && status !== 'idle' && (
+                  <TranscriptView
+                    entries={inputMode === 'text' ? [{ id: 'manual', speaker: 'unknown', text: manualText, lang: 'ko', timestamp: Date.now() }] : transcripts}
+                    partialText={null} partialSpeaker="unknown" />
+                )}
               </div>
-            )}
-            {inputMode === 'text' && status === 'idle' && (
-              <div className="flex flex-col h-full">
-                <h2 className="text-xs font-semibold text-slate-400 mb-2">상담 텍스트 입력</h2>
-                <textarea value={manualText} onChange={(e) => setManualText(e.target.value)}
-                  placeholder="상담 내용을 입력하세요..."
-                  className="flex-1 w-full p-3 text-sm leading-relaxed bg-white border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-200" />
-                <p className="text-xs text-slate-400 mt-1">{manualText.length}자</p>
+            </Panel>
+            <PanelResizeHandle className="h-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-row-resize" />
+            <Panel defaultSize={30} minSize={10}>
+              <div className="h-full p-2 overflow-y-auto bg-slate-50/50">
+                <p className="text-[10px] text-slate-300 text-center">여유 공간</p>
               </div>
-            )}
-            {inputMode !== 'voice' && status !== 'idle' && (
-              <TranscriptView
-                entries={inputMode === 'text' ? [{ id: 'manual', speaker: 'unknown', text: manualText, lang: 'ko', timestamp: Date.now() }] : transcripts}
-                partialText={null} partialSpeaker="unknown" />
-            )}
-          </div>
+            </Panel>
+          </PanelGroup>
         </Panel>
 
         <PanelResizeHandle className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
