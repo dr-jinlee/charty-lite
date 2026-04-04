@@ -71,9 +71,7 @@ export default function ChartyRecommendation({ transcriptText }: ChartyRecommend
           <span className="text-[11px] text-slate-400 animate-pulse">분석 중...</span>
         ) : recommendation ? (
           <span className="text-[11px] text-purple-700 font-medium">{recommendation}</span>
-        ) : (
-          <span className="text-[11px] text-slate-300">상담이 진행되면 시술 추천이 나타납니다</span>
-        )}
+        ) : null}
       </div>
     </div>
   );
