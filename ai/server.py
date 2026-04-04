@@ -588,20 +588,25 @@ def get_exchange_rates():
 
 @app.route("/recommend", methods=["POST"])
 def recommend_procedure():
-    """실시간 시술 추천 (한 줄)"""
+    """실시간 시술 추천 — Procedure Hub 시너지 데이터 기반"""
     data = request.get_json(silent=True)
     if not data or not data.get("transcript", "").strip():
         return jsonify({"recommendation": ""})
 
     transcript = data["transcript"][-600:]
 
+    # Procedure Hub에서 추천 조합 데이터 가져오기
+    hub_context = _get_procedure_hub_context()
+
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
         response = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=40,
-            system="너는 미용 클리닉 시술 추천 봇이다. 대화하지 마라. 시술명만 추천하라. 질문하지 마라. 설명하지 마라.",
+            max_tokens=60,
+            system=f"""너는 미용 클리닉 시술 추천 봇이다. 대화하지 마라. 시술명만 추천하라.
+다음은 검증된 시너지 조합 데이터다:
+{hub_context}""",
             messages=[{"role": "user", "content": f"""아래 상담 녹취에서 언급된 시술과 시너지가 좋은 추가 시술 1개를 추천하라.
 
 규칙:
@@ -623,6 +628,72 @@ def recommend_procedure():
     except Exception as e:
         print(f"[추천] 실패: {e}")
         return jsonify({"recommendation": ""})
+
+
+# ─── Procedure Hub 연동 ───
+PROCEDURE_HUB_URL = os.getenv("PROCEDURE_HUB_URL", "http://localhost:3002")
+_hub_cache = {"combos": None, "synergy": None, "timestamp": 0}
+
+def _get_procedure_hub_context():
+    """Procedure Hub에서 시너지/추천 데이터 가져오기 (5분 캐시)"""
+    now = time.time()
+    if _hub_cache["combos"] and now - _hub_cache["timestamp"] < 300:
+        return _hub_cache["combos"]
+    try:
+        req = urllib.request.Request(f"{PROCEDURE_HUB_URL}/api/combo-recipes")
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            recipes = json.loads(resp.read())
+        lines = []
+        for r in recipes.get("recipes", []):
+            procs = ", ".join(r.get("procedures", []))
+            lines.append(f"{r['name']}: {procs}")
+        context = "\n".join(lines[:10])
+        _hub_cache["combos"] = context
+        _hub_cache["timestamp"] = now
+        return context
+    except Exception:
+        return ""
+
+
+@app.route("/procedure-hub/combos", methods=["POST"])
+def procedure_hub_combos():
+    """Procedure Hub 기반 고민별 추천 조합 반환"""
+    data = request.get_json(silent=True) or {}
+    transcript = data.get("transcript", "")
+    problem_id = data.get("problem_id", "")
+
+    try:
+        req = urllib.request.Request(f"{PROCEDURE_HUB_URL}/api/problem-combos")
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            combos_data = json.loads(resp.read())
+
+        combos = combos_data.get("combos", [])
+
+        if problem_id:
+            combos = [c for c in combos if c["problem_id"] == problem_id]
+
+        if not problem_id and transcript:
+            keyword_map = {
+                "P1": ["쁘띠", "간단", "가벼운"],
+                "P2": ["주름", "이마", "미간", "눈가", "팔자"],
+                "P3": ["처짐", "탄력", "리프팅", "턱선", "볼처짐"],
+                "P4": ["피부결", "톤", "노화", "항노화", "광채"],
+                "P5": ["색소", "기미", "잡티", "미백", "색"],
+                "P7": ["모공", "피지", "블랙헤드"],
+                "P9": ["흉터", "여드름흉터", "수술흉터"],
+                "P11": ["윤곽", "사각턱", "V라인", "턱"],
+            }
+            matched = []
+            for pid, keywords in keyword_map.items():
+                if any(kw in transcript for kw in keywords):
+                    matched.append(pid)
+            if matched:
+                combos = [c for c in combos if c["problem_id"] in matched]
+
+        return jsonify({"combos": combos, "procedureHubUrl": PROCEDURE_HUB_URL})
+    except Exception as e:
+        print(f"[Procedure Hub] 연동 실패: {e}")
+        return jsonify({"combos": [], "error": str(e)})
 
 
 @app.route("/procedure-info", methods=["POST"])
