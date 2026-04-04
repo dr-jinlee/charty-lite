@@ -11,7 +11,7 @@ import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
 import { instantTranslate } from '@/lib/medicalDict';
 import { retroCorrect, correctBySimilarity } from '@/lib/contextCorrector';
-import { usePanelResize, useHeightResize } from '@/lib/useResize';
+import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels';
 
 type AppStatus = 'idle' | 'recording' | 'paused' | 'processing' | 'done';
 type InputMode = 'voice' | 'upload' | 'text';
@@ -48,35 +48,12 @@ export default function Home() {
   const [manualText, setManualText] = useState('');
   const [uploadStatus, setUploadStatus] = useState('');
   const [checklistResetKey, setChecklistResetKey] = useState(0);
-  const [pickHeight, setPickHeight] = useState(32);
   const [evalResult, setEvalResult] = useState<any>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [showEval, setShowEval] = useState(false);
   const [salesAmount, setSalesAmount] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 3패널 너비 (마운트 시 실제 화면 기준으로 재계산)
-  const [colWidths, setColWidths] = useState<[number, number, number]>(() => {
-    const w = typeof window !== 'undefined' ? window.innerWidth - 16 : 1400;
-    return [w * 0.35, w * 0.2, w * 0.45];
-  });
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // 마운트 시 화면 너비로 초기화
-  useEffect(() => {
-    const w = window.innerWidth - 16;
-    setColWidths([w * 0.35, w * 0.2, w * 0.45]);
-  }, []);
-
-  // 리사이즈 (시작점 기반 — delta 누적 에러 없음)
-  const colWidthsRef = useRef(colWidths);
-  colWidthsRef.current = colWidths;
-  const pickHeightRef = useRef(pickHeight);
-  pickHeightRef.current = pickHeight;
-
-  const divider0 = usePanelResize(() => colWidthsRef.current, (s) => setColWidths(s as [number,number,number]), 0, 1, containerRef);
-  const divider1 = usePanelResize(() => colWidthsRef.current, (s) => setColWidths(s as [number,number,number]), 1, 2, containerRef);
-  const pickDivider = useHeightResize(() => pickHeightRef.current, setPickHeight);
 
   // STT 용어 보정
   const [corrections, setCorrections] = useState<Record<string, string>>({});
@@ -106,16 +83,6 @@ export default function Home() {
     };
   }, []);
 
-  // 컨테이너 마운트 후 실제 너비로 보정
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      if (containerRef.current) {
-        const w = containerRef.current.getBoundingClientRect().width;
-        if (w > 0) setColWidths([w * 0.35, w * 0.2, w * 0.45]);
-      }
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // 용어 보정 로드
   useEffect(() => {
@@ -579,12 +546,11 @@ export default function Home() {
       {/* 상담 흐름 가이드 */}
       <ConsultationProgress transcriptText={transcriptText} />
 
-      {/* 메인 3패널 (CSS Grid) */}
-      <main ref={containerRef} className="flex-1 overflow-hidden"
-        style={{ display: 'grid', gridTemplateColumns: `${colWidths[0]}px 8px ${colWidths[1]}px 8px ${colWidths[2]}px` }}>
+      {/* 메인 3패널 (react-resizable-panels) */}
+      <PanelGroup className="flex-1" style={{ display: 'flex', flexDirection: 'row' }}>
         {/* 왼쪽: 실시간 기록 */}
-        <div className="flex flex-col min-w-0 overflow-hidden">
-          <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
+        <Panel defaultSize={35} minSize={10}>
+          <div className="h-full p-4 flex flex-col overflow-hidden">
             {inputMode === 'voice' && (
               <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
                 isInterpreting={interpretMode} targetLang={targetLang} partialTranslation={partialTranslation} />
@@ -625,38 +591,30 @@ export default function Home() {
                 partialText={null} partialSpeaker="unknown" />
             )}
           </div>
-        </div>
+        </Panel>
 
-        {/* 구분선 1 */}
-        <div {...divider0}
-          className="bg-slate-200 hover:bg-purple-300 cursor-col-resize transition-colors active:bg-purple-400 select-none">&nbsp;</div>
+        <PanelResizeHandle className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
 
         {/* 가운데: 추천 + 체크리스트 */}
-        <div className="flex flex-col min-w-0 overflow-hidden">
-          <div style={{ height: pickHeight }} className="flex-shrink-0 overflow-hidden">
+        <Panel defaultSize={20} minSize={10}>
+          <div className="h-full flex flex-col overflow-hidden">
             <ChartyRecommendation transcriptText={transcriptText} />
+            <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
           </div>
-          <div {...pickDivider}
-            className="h-2 hover:h-3 bg-slate-100 hover:bg-purple-200 cursor-row-resize flex-shrink-0 transition-all active:bg-purple-300 flex items-center justify-center touch-none">
-            <div className="w-8 h-0.5 bg-slate-300 rounded-full" />
-          </div>
-          <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
-        </div>
+        </Panel>
 
-        {/* 구분선 2 */}
-        <div {...divider1}
-          className="bg-slate-200 hover:bg-purple-300 cursor-col-resize transition-colors active:bg-purple-400 select-none">&nbsp;</div>
+        <PanelResizeHandle className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
 
         {/* 오른쪽: 차트 */}
-        <div className="flex flex-col min-w-0 overflow-hidden">
-          <div className="flex-1 p-4 overflow-hidden flex flex-col">
+        <Panel defaultSize={45} minSize={10}>
+          <div className="h-full p-4 flex flex-col overflow-hidden">
             <ChartPreview
               chart={chart} summary={summary} isGenerating={isGenerating} rawTranscript={rawTranscript}
               cart={[]} discountRate={0} selectedCurrency="KRW" exchangeRates={null}
             />
           </div>
-        </div>
-      </main>
+        </Panel>
+      </PanelGroup>
 
       {/* 상담 종료 요약 바 */}
       {status === 'done' && chart && (
