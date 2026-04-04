@@ -55,9 +55,16 @@ export default function Home() {
   const [salesAmount, setSalesAmount] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 3패널 너비
+  // 3패널 너비 (마운트 시 실제 화면 기준으로 재계산)
   const [colWidths, setColWidths] = useState<[number, number, number]>([500, 280, 620]);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const w = containerRef.current.getBoundingClientRect().width - 8; // 구분선 여유
+      setColWidths([w * 0.35, w * 0.2, w * 0.45]);
+    }
+  }, []);
 
   // 리사이즈 훅
   const divider0 = useDragResize('horizontal', useCallback((delta: number) => {
