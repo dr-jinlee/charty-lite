@@ -665,7 +665,9 @@ export default function Home() {
             <ChartyRecommendation transcriptText={transcriptText} />
           </div>
           <div onMouseDown={(e) => { isDraggingPickRef.current = true; lastPickYRef.current = e.clientY; document.body.style.cursor = 'row-resize'; document.body.style.userSelect = 'none'; }}
-            className="h-1 hover:h-1.5 bg-slate-200 hover:bg-purple-300 cursor-row-resize flex-shrink-0 transition-all active:bg-purple-400" />
+            className="h-2 hover:h-3 bg-slate-100 hover:bg-purple-200 cursor-row-resize flex-shrink-0 transition-all active:bg-purple-300 flex items-center justify-center">
+            <div className="w-8 h-0.5 bg-slate-300 rounded-full" />
+          </div>
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
 
