@@ -11,7 +11,7 @@ import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
 import { instantTranslate } from '@/lib/medicalDict';
 import { retroCorrect, correctBySimilarity } from '@/lib/contextCorrector';
-import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels';
+import { Panel, Group, Separator } from 'react-resizable-panels';
 
 type AppStatus = 'idle' | 'recording' | 'paused' | 'processing' | 'done';
 type InputMode = 'voice' | 'upload' | 'text';
@@ -547,10 +547,10 @@ export default function Home() {
       <ConsultationProgress transcriptText={transcriptText} />
 
       {/* 메인 3패널 (react-resizable-panels) */}
-      <PanelGroup className="flex-1" style={{ display: 'flex', flexDirection: 'row' }}>
+      <Group className="flex-1" orientation="horizontal">
         {/* 왼쪽: 실시간 기록 (위아래 리사이즈) */}
         <Panel defaultSize={35} minSize={10}>
-          <PanelGroup className="h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+          <Group className="h-full" orientation="vertical">
             <Panel defaultSize={70} minSize={20}>
               <div className="h-full p-4 flex flex-col overflow-hidden">
                 {inputMode === 'voice' && (
@@ -594,16 +594,16 @@ export default function Home() {
                 )}
               </div>
             </Panel>
-            <PanelResizeHandle className="h-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-row-resize" />
+            <Separator className="h-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-row-resize" />
             <Panel defaultSize={30} minSize={10}>
               <div className="h-full p-2 overflow-y-auto bg-slate-50/50">
                 <p className="text-[10px] text-slate-300 text-center">여유 공간</p>
               </div>
             </Panel>
-          </PanelGroup>
+          </Group>
         </Panel>
 
-        <PanelResizeHandle className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
+        <Separator className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
 
         {/* 가운데: 추천 + 체크리스트 */}
         <Panel defaultSize={20} minSize={10}>
@@ -613,7 +613,7 @@ export default function Home() {
           </div>
         </Panel>
 
-        <PanelResizeHandle className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
+        <Separator className="w-2 bg-slate-200 hover:bg-purple-300 transition-colors active:bg-purple-400 cursor-col-resize" />
 
         {/* 오른쪽: 차트 */}
         <Panel defaultSize={45} minSize={10}>
@@ -624,7 +624,7 @@ export default function Home() {
             />
           </div>
         </Panel>
-      </PanelGroup>
+      </Group>
 
       {/* 상담 종료 요약 바 */}
       {status === 'done' && chart && (
