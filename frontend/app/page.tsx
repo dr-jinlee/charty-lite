@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import TranscriptView, { TranscriptEntry } from '@/components/TranscriptView';
 import ChartPreview from '@/components/ChartPreview';
 import SessionControls from '@/components/SessionControls';
@@ -11,6 +11,7 @@ import { formatConsultant } from '@/lib/formatConsultant';
 import { API_URL } from '@/lib/api';
 import { instantTranslate } from '@/lib/medicalDict';
 import { retroCorrect, correctBySimilarity } from '@/lib/contextCorrector';
+import { useDragResize } from '@/lib/useResize';
 
 type AppStatus = 'idle' | 'recording' | 'paused' | 'processing' | 'done';
 type InputMode = 'voice' | 'upload' | 'text';
@@ -48,25 +49,34 @@ export default function Home() {
   const [uploadStatus, setUploadStatus] = useState('');
   const [checklistResetKey, setChecklistResetKey] = useState(0);
   const [pickHeight, setPickHeight] = useState(32);
-  const isDraggingPickRef = useRef(false);
-  const lastPickYRef = useRef(0);
   const [evalResult, setEvalResult] = useState<any>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [showEval, setShowEval] = useState(false);
   const [salesAmount, setSalesAmount] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 3패널 너비 (px, 초기값은 화면 기준으로 계산)
-  const [colWidths, setColWidths] = useState<[number, number, number]>(() => {
-    if (typeof window !== 'undefined') {
-      const w = window.innerWidth;
-      return [w * 0.35, w * 0.2, w * 0.45];
-    }
-    return [500, 300, 600];
-  });
-  const draggingColRef = useRef<number | null>(null);
-  const lastXRef = useRef(0);
+  // 3패널 너비
+  const [colWidths, setColWidths] = useState<[number, number, number]>([500, 280, 620]);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 리사이즈 훅
+  const divider0 = useDragResize('horizontal', useCallback((delta: number) => {
+    setColWidths(prev => {
+      const n = [...prev] as [number, number, number];
+      if (n[0] + delta >= 100 && n[1] - delta >= 100) { n[0] += delta; n[1] -= delta; return n; }
+      return prev;
+    });
+  }, []));
+  const divider1 = useDragResize('horizontal', useCallback((delta: number) => {
+    setColWidths(prev => {
+      const n = [...prev] as [number, number, number];
+      if (n[1] + delta >= 100 && n[2] - delta >= 100) { n[1] += delta; n[2] -= delta; return n; }
+      return prev;
+    });
+  }, []));
+  const pickDivider = useDragResize('vertical', useCallback((delta: number) => {
+    setPickHeight(prev => Math.max(28, Math.min(prev + delta, 200)));
+  }, []));
 
   // STT 용어 보정
   const [corrections, setCorrections] = useState<Record<string, string>>({});
@@ -259,46 +269,7 @@ export default function Home() {
     }, 3000);
   }
 
-  // 리사이즈 (clientX 추적 방식)
-  useEffect(() => {
-    function onMouseMove(e: MouseEvent) {
-      // Charty's Pick 높이 조절
-      if (isDraggingPickRef.current) {
-        e.preventDefault();
-        const delta = e.clientY - lastPickYRef.current;
-        lastPickYRef.current = e.clientY;
-        setPickHeight(prev => Math.max(28, Math.min(prev + delta, 200)));
-        return;
-      }
-      if (draggingColRef.current === null) return;
-      e.preventDefault();
-      const idx = draggingColRef.current;
-      const delta = e.clientX - lastXRef.current;
-      lastXRef.current = e.clientX;
-      if (delta === 0) return;
-      const MIN = 100;
-      setColWidths(prev => {
-        const next = [...prev] as [number, number, number];
-        const newLeft = next[idx] + delta;
-        const newRight = next[idx + 1] - delta;
-        if (newLeft >= MIN && newRight >= MIN) {
-          next[idx] = newLeft;
-          next[idx + 1] = newRight;
-          return next;
-        }
-        return prev;
-      });
-    }
-    function onMouseUp() {
-      draggingColRef.current = null;
-      isDraggingPickRef.current = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    }
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-    return () => { document.removeEventListener('mousemove', onMouseMove); document.removeEventListener('mouseup', onMouseUp); };
-  }, []);
+  // (리사이즈는 useDragResize 훅으로 처리)
 
   // 타이머 + 목표 시간 알림
   useEffect(() => {
@@ -656,24 +627,24 @@ export default function Home() {
         </div>
 
         {/* 구분선 1 */}
-        <div onMouseDown={(e) => { draggingColRef.current = 0; lastXRef.current = e.clientX; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
-          className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
+        <div {...divider0}
+          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none" />
 
         {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
           <div style={{ height: pickHeight }} className="flex-shrink-0 overflow-hidden">
             <ChartyRecommendation transcriptText={transcriptText} />
           </div>
-          <div onMouseDown={(e) => { isDraggingPickRef.current = true; lastPickYRef.current = e.clientY; document.body.style.cursor = 'row-resize'; document.body.style.userSelect = 'none'; }}
-            className="h-2 hover:h-3 bg-slate-100 hover:bg-purple-200 cursor-row-resize flex-shrink-0 transition-all active:bg-purple-300 flex items-center justify-center">
+          <div {...pickDivider}
+            className="h-2 hover:h-3 bg-slate-100 hover:bg-purple-200 cursor-row-resize flex-shrink-0 transition-all active:bg-purple-300 flex items-center justify-center touch-none">
             <div className="w-8 h-0.5 bg-slate-300 rounded-full" />
           </div>
           <ConsultationChecklist cart={[]} consultType={consultType} transcriptText={transcriptText} template={consultTemplate} resetKey={checklistResetKey} />
         </div>
 
         {/* 구분선 2 */}
-        <div onMouseDown={(e) => { draggingColRef.current = 1; lastXRef.current = e.clientX; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; }}
-          className="w-1.5 hover:w-2.5 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400" />
+        <div {...divider1}
+          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none" />
 
         {/* 오른쪽: 차트 */}
         <div style={{ width: colWidths[2] }} className="flex flex-col min-w-0 flex-shrink-0">
