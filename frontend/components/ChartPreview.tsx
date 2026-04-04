@@ -452,8 +452,8 @@ export default function ChartPreview({
         {!isGenerating && !chart && activeTab === 'chart' && (
           <div className="flex items-center justify-center h-full text-slate-400">
             <div className="text-center">
-              <p className="text-lg mb-2">상담 종료 후</p>
-              <p className="text-lg">여기에 차트가 생성됩니다</p>
+              <p className="text-sm mb-1">상담 종료 후</p>
+              <p className="text-sm">여기에 차트가 생성됩니다</p>
             </div>
           </div>
         )}

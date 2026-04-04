@@ -161,15 +161,11 @@ export default function Home() {
     return instantTranslate(text, lang);
   }
 
-  // 2단계: interim 선번역 (중간 결과 일정 길이 이상이면 미리 번역 시작)
+  // 2단계: interim 선번역 — dict는 ~0ms CPU 연산이므로 디바운스 없이 즉시 실행
   function preTranslateInterim(text: string, lang: string) {
     if (!interpretMode || text.length < 8) return;
-    if (interimTranslateRef.current) clearTimeout(interimTranslateRef.current);
-    interimTranslateRef.current = setTimeout(() => {
-      // 사전 매칭 결과를 partial 번역으로 미리 표시
-      const dict = dictTranslate(text, lang);
-      if (dict) setPartialTranslation(dict);
-    }, 200);
+    const dict = dictTranslate(text, lang);
+    if (dict) setPartialTranslation(dict);
   }
 
   const [partialTranslation, setPartialTranslation] = useState<string | null>(null);
@@ -203,24 +199,25 @@ export default function Home() {
       .catch(() => {});
   }
 
-  // 4단계: 후보정 (3초 후, 각 문장 독립 실행 — 레이스 컨디션 없음)
-  function schedulePostCorrection(entryId: string, original: string, firstTranslation: string, lang: string) {
+  // 4단계: 후보정 (3초 후, 문맥 기반 재번역)
+  // 핵심: retroCorrect(500ms)로 텍스트가 이미 바뀌었을 수 있으므로 transcriptsRef에서 최신 텍스트를 읽음
+  function schedulePostCorrection(entryId: string, _original: string, firstTranslation: string, lang: string) {
     setTimeout(() => {
-      // 앞뒤 문장 문맥 수집
       const allTexts = transcriptsRef.current;
       const idx = allTexts.findIndex(e => e.id === entryId);
       if (idx === -1) return;
+      const latestText = allTexts[idx].text; // retroCorrect 반영된 최신 텍스트
       const contextBefore = allTexts.slice(Math.max(0, idx - 2), idx).map(e => e.text).join(' ');
       const contextAfter = allTexts.slice(idx + 1, idx + 2).map(e => e.text).join(' ');
 
       fetch(`${API_URL}/interpret/translate`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          text: original,
+          text: latestText,
           sourceLang: 'ko',
           targetLang: lang,
           speakerRole: 'doctor',
-          customPrompt: `이전 문맥: "${contextBefore}". 다음 문맥: "${contextAfter}". 이 맥락에서 "${original}"을 자연스럽고 정확하게 번역하세요. 의료/미용 전문 용어를 정확히 사용하세요.`,
+          customPrompt: `이전 문맥: "${contextBefore}". 다음 문맥: "${contextAfter}". 이 맥락에서 "${latestText}"을 자연스럽고 정확하게 번역하세요. 의료/미용 전문 용어를 정확히 사용하세요.`,
         }),
       })
         .then(r => r.json())
@@ -290,7 +287,7 @@ export default function Home() {
           translateFinal(entryId, corrected, targetLang);
         }
 
-        // 슬라이딩 윈도우 역보정: 이전 세그먼트를 새 문맥으로 재검증
+        // 슬라이딩 윈도우 역보정 → 보정된 항목 재번역
         setTimeout(() => {
           const current = transcriptsRef.current;
           const fixes = retroCorrect(current, 3);
@@ -299,6 +296,10 @@ export default function Home() {
               const fix = fixes.find(f => f.id === e.id);
               return fix ? { ...e, text: fix.corrected } : e;
             }));
+            // 한국어가 바뀌었으면 번역도 다시 (안 하면 옛날 번역이 남음)
+            if (interpretMode) {
+              fixes.forEach(fix => translateFinal(fix.id, fix.corrected, targetLang));
+            }
           }
         }, 500);
       }
