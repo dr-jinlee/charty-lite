@@ -628,7 +628,7 @@ export default function Home() {
 
         {/* 구분선 1 */}
         <div {...divider0}
-          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none" />
+          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none select-none">&nbsp;</div>
 
         {/* 가운데: 추천 + 체크리스트 */}
         <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
@@ -644,7 +644,7 @@ export default function Home() {
 
         {/* 구분선 2 */}
         <div {...divider1}
-          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none" />
+          className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none select-none">&nbsp;</div>
 
         {/* 오른쪽: 차트 */}
         <div style={{ width: colWidths[2] }} className="flex flex-col min-w-0 flex-shrink-0">
