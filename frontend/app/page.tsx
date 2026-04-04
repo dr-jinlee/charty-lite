@@ -56,15 +56,16 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 3패널 너비 (마운트 시 실제 화면 기준으로 재계산)
-  const [colWidths, setColWidths] = useState<[number, number, number]>([500, 280, 620]);
+  const [colWidths, setColWidths] = useState<[number, number, number]>(() => {
+    const w = typeof window !== 'undefined' ? window.innerWidth - 16 : 1400;
+    return [w * 0.35, w * 0.2, w * 0.45];
+  });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 마운트 시 컨테이너 실제 너비로 초기화
+  // 마운트 시 화면 너비로 초기화
   useEffect(() => {
-    if (containerRef.current) {
-      const w = containerRef.current.getBoundingClientRect().width - 16;
-      setColWidths([w * 0.35, w * 0.2, w * 0.45]);
-    }
+    const w = window.innerWidth - 16;
+    setColWidths([w * 0.35, w * 0.2, w * 0.45]);
   }, []);
 
   // 리사이즈 (시작점 기반 — delta 누적 에러 없음)
