@@ -258,7 +258,12 @@ export default function Home() {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = sttLang === 'en' ? 'en-US' : 'ko-KR';
+    const langMap: Record<string, string> = {
+      ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP', vi: 'vi-VN',
+    };
+    const activeLang = interpretMode ? (targetLang || 'en') : sttLang;
+    recognition.lang = langMap[activeLang] || 'ko-KR';
+    try { (recognition as any).maxAlternatives = 3; } catch {};
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       let interimText = '';
