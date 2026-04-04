@@ -61,28 +61,33 @@ export default function Home() {
 
   useEffect(() => {
     if (containerRef.current) {
-      const w = containerRef.current.getBoundingClientRect().width - 8; // 구분선 여유
+      const w = containerRef.current.getBoundingClientRect().width - 16; // 구분선 2개 × 8px
       setColWidths([w * 0.35, w * 0.2, w * 0.45]);
     }
   }, []);
 
-  // 리사이즈 훅
+  // 리사이즈 훅 (boolean 반환 → delta 거부 시 snap 방지)
   const divider0 = useDragResize('horizontal', useCallback((delta: number) => {
+    let ok = false;
     setColWidths(prev => {
       const n = [...prev] as [number, number, number];
-      if (n[0] + delta >= 100 && n[1] - delta >= 100) { n[0] += delta; n[1] -= delta; return n; }
+      if (n[0] + delta >= 100 && n[1] - delta >= 100) { n[0] += delta; n[1] -= delta; ok = true; return n; }
       return prev;
     });
+    return ok;
   }, []));
   const divider1 = useDragResize('horizontal', useCallback((delta: number) => {
+    let ok = false;
     setColWidths(prev => {
       const n = [...prev] as [number, number, number];
-      if (n[1] + delta >= 100 && n[2] - delta >= 100) { n[1] += delta; n[2] -= delta; return n; }
+      if (n[1] + delta >= 100 && n[2] - delta >= 100) { n[1] += delta; n[2] -= delta; ok = true; return n; }
       return prev;
     });
+    return ok;
   }, []));
   const pickDivider = useDragResize('vertical', useCallback((delta: number) => {
     setPickHeight(prev => Math.max(28, Math.min(prev + delta, 200)));
+    return true;
   }, []));
 
   // STT 용어 보정
@@ -589,7 +594,7 @@ export default function Home() {
       {/* 메인 3패널 */}
       <main ref={containerRef} className="flex-1 flex overflow-hidden">
         {/* 왼쪽: 실시간 기록 */}
-        <div style={{ width: colWidths[0] }} className="flex flex-col min-w-0 flex-shrink-0">
+        <div style={{ width: colWidths[0] }} className="flex flex-col min-w-0 flex-shrink-0 overflow-hidden">
           <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
             {inputMode === 'voice' && (
               <TranscriptView entries={transcripts} partialText={partialText} partialSpeaker={partialSpeaker}
@@ -638,7 +643,7 @@ export default function Home() {
           className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none select-none">&nbsp;</div>
 
         {/* 가운데: 추천 + 체크리스트 */}
-        <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0">
+        <div style={{ width: colWidths[1] }} className="flex flex-col min-w-0 flex-shrink-0 overflow-hidden">
           <div style={{ height: pickHeight }} className="flex-shrink-0 overflow-hidden">
             <ChartyRecommendation transcriptText={transcriptText} />
           </div>
@@ -654,7 +659,7 @@ export default function Home() {
           className="w-2 hover:w-3 bg-slate-200 hover:bg-purple-300 cursor-col-resize flex-shrink-0 transition-all active:bg-purple-400 touch-none select-none">&nbsp;</div>
 
         {/* 오른쪽: 차트 */}
-        <div style={{ width: colWidths[2] }} className="flex flex-col min-w-0 flex-shrink-0">
+        <div style={{ width: colWidths[2] }} className="flex flex-col min-w-0 flex-shrink-0 overflow-hidden">
           <div className="flex-1 p-4 overflow-hidden flex flex-col">
             <ChartPreview
               chart={chart} summary={summary} isGenerating={isGenerating} rawTranscript={rawTranscript}

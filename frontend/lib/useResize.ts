@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 
 export function useDragResize(
   direction: 'horizontal' | 'vertical',
-  onDelta: (delta: number) => void,
+  onDelta: (delta: number) => boolean,
 ) {
   const lastPos = useRef(0);
 
@@ -16,8 +16,10 @@ export function useDragResize(
     function onMove(ev: PointerEvent) {
       const pos = direction === 'horizontal' ? ev.clientX : ev.clientY;
       const delta = pos - lastPos.current;
-      lastPos.current = pos;
-      if (delta !== 0) onDelta(delta);
+      if (delta !== 0) {
+        const accepted = onDelta(delta);
+        if (accepted) lastPos.current = pos; // 거부되면 위치 안 바꿈 (snap 방지)
+      }
     }
 
     function onUp() {
