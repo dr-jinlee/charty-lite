@@ -9,3 +9,4 @@ data/
 *.mp3
 .DS_Store
 venv/
+frontend/tsconfig.tsbuildinfo
